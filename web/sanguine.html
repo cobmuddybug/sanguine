@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>~*~ SANGUINE ~*~ Gothic Vampire Idle Game ~*~ Welcome to the Night</title>
+<meta name="keywords" content="vampire, gothic, goth, dark, blood, idle, game, hell, coven">
+<style>
+:root { --blood:#ff1a3c; --dark:#0b0000; --ember:#ff8a1f; --bone:#d8d0d0; --gold:#ffd700; --violet:#b070ff; }
+* { box-sizing: border-box; }
+html { background:#000; }
+body {
+  margin:0; padding:8px 4px 40px; color:var(--bone);
+  font-family:"Times New Roman", Times, serif; font-size:16px;
+  background-color:#000;
+  background-image:
+    radial-gradient(1px 1px at 20px 30px,#fff,transparent),
+    radial-gradient(1px 1px at 90px 120px,#f88,transparent),
+    radial-gradient(2px 2px at 150px 60px,#fff,transparent),
+    radial-gradient(1px 1px at 60px 170px,#fcc,transparent),
+    radial-gradient(1px 1px at 180px 190px,#fff,transparent),
+    radial-gradient(1px 1px at 120px 20px,#a66,transparent);
+  background-size:200px 200px;
+  cursor:crosshair;
+}
+a { color:var(--blood); text-decoration:underline; cursor:pointer; }
+a:visited { color:var(--violet); }
+a:hover { color:#ffff00; background:#500; }
+#wrap { max-width:900px; margin:0 auto; }
+.box { background:rgba(12,0,0,.93); border:4px ridge #7a0000; padding:8px; margin:8px 0; }
+.box.thin { border-width:3px; }
+h1.logo {
+  font-family:"UnifrakturCook","UnifrakturMaguntia","Old English Text MT","Blackadder ITC","Chiller",fantasy,serif;
+  font-size:clamp(40px,10vw,84px); margin:0; text-align:center; line-height:1;
+  color:var(--blood); text-shadow:3px 3px 0 #300, 0 0 12px #f00, 0 0 28px #800; letter-spacing:2px;
+}
+h2 { font-family:"Old English Text MT","Blackadder ITC","Chiller",fantasy,serif; color:var(--blood); margin:4px 0 8px; text-shadow:2px 2px #200; font-weight:normal; font-size:26px; }
+.sub { text-align:center; color:var(--gold); font-style:italic; margin:4px 0; }
+.center { text-align:center; }
+.blink { animation:blink 1s steps(2,start) infinite; }
+@keyframes blink { to { visibility:hidden; } }
+.fire { height:14px; margin:6px 0; border:0;
+  background:repeating-linear-gradient(90deg,#f00 0 8px,#f60 8px 16px,#fd0 16px 24px,#f60 24px 32px);
+  animation:fire .4s steps(4) infinite; opacity:.9; }
+@keyframes fire { to { background-position:32px 0; } }
+.construction { background:repeating-linear-gradient(45deg,#ffd700 0 14px,#000 14px 28px); animation:stripes 1s linear infinite;
+  color:#000; text-align:center; font-weight:bold; padding:0; margin:6px 0; border:2px solid #ffd700; }
+.construction span { display:inline-block; background:#000; color:#ffd700; padding:2px 10px; margin:3px; }
+@keyframes stripes { to { background-position:28px 0; } }
+.ticker { overflow:hidden; white-space:nowrap; border:2px inset #600; background:#100; color:var(--ember); font-family:"Courier New",monospace; padding:3px 0; }
+.ticker div { display:inline-block; padding-left:100%; animation:scroll 22s linear infinite; }
+@keyframes scroll { to { transform:translateX(-100%); } }
+table { border-collapse:collapse; width:100%; }
+td, th { padding:3px 5px; vertical-align:middle; }
+.stats td { border:2px groove #600; background:#180000; text-align:center; width:33%; }
+.stats .k { color:#a88; font-size:12px; letter-spacing:2px; }
+.stats .v { color:#fff; font-size:22px; font-family:"Courier New",monospace; font-weight:bold; text-shadow:0 0 6px var(--blood); }
+.stats .s { color:#a88; font-size:12px; font-family:"Courier New",monospace; }
+.meter { display:inline-block; width:100%; height:8px; background:#200; border:1px solid #600; vertical-align:middle; }
+.meter i { display:block; height:100%; background:linear-gradient(90deg,#800,#f33); }
+.meter.hot i { background:linear-gradient(90deg,#f60,#ff0); }
+.nav { text-align:center; padding:6px 2px; line-height:2.2; }
+.nav a { display:inline-block; white-space:nowrap; font-family:"Courier New",monospace; font-weight:bold; text-decoration:none; padding:2px 6px; margin:0 2px; border:2px outset #a00; background:#200; color:#f66; }
+.nav a:hover { background:#f00; color:#fff; }
+.nav a.on { background:#a00; color:#fff; border-style:inset; }
+.btn { font-family:"Courier New",monospace; font-size:13px; font-weight:bold; background:#300; color:#fbb; border:2px outset #b00; padding:4px 8px; cursor:pointer; user-select:none; display:inline-block; text-align:center; min-width:90px; }
+.btn:hover { background:#c00; color:#fff; }
+.btn:active, .btn.on { border-style:inset; }
+.btn.off { color:#644; background:#180808; border-color:#411; cursor:not-allowed; }
+.btn.off:hover { background:#180808; color:#644; }
+.btn small { display:block; font-weight:normal; color:inherit; opacity:.85; }
+.row td { border-bottom:1px dotted #600; }
+.row.locked { color:#666; }
+.row .nm { font-family:"Old English Text MT","Chiller",fantasy,serif; font-size:20px; color:var(--blood); }
+.row .fl { font-size:12px; color:#a99; font-style:italic; }
+.bar { position:relative; height:26px; border:2px inset #600; background:#1a0000; cursor:pointer; min-width:110px; }
+.bar .fill { position:absolute; left:0; top:0; bottom:0; width:0; background:repeating-linear-gradient(90deg,#a00 0 6px,#c10 6px 12px); }
+.bar.auto .fill { background:repeating-linear-gradient(90deg,#620 0 6px,#a40 6px 12px); }
+.bar .lbl { position:absolute; inset:0; text-align:center; font:bold 12px/22px "Courier New",monospace; color:#fff; text-shadow:1px 1px #000; }
+.dim { color:#977; } .good { color:#6f6; } .bad { color:#f55; } .gold { color:var(--gold); }
+.small { font-size:12px; }
+.card { border:2px groove #600; background:#130000; padding:6px 8px; margin:6px 0; }
+.card.sealed { color:#777; background:#0a0505; }
+.card h3 { margin:0 0 3px; font-family:"Old English Text MT","Chiller",fantasy,serif; font-weight:normal; color:var(--blood); font-size:20px; }
+.hitcount { display:inline-block; background:#000; color:#0f0; font-family:"Courier New",monospace; letter-spacing:3px; padding:2px 6px; border:3px inset #555; }
+.b88 { display:inline-block; width:88px; height:31px; border:2px outset #888; font:bold 10px/12px Arial,sans-serif; text-align:center; padding:3px 1px; margin:2px; vertical-align:top; overflow:hidden; }
+#modal { position:fixed; inset:0; background:rgba(0,0,0,.78); display:none; z-index:50; align-items:center; justify-content:center; padding:10px; }
+#modal.show { display:flex; }
+#modal .win { background:#c0c0c0; color:#000; border:3px outset #fff; max-width:560px; width:100%; max-height:92vh; overflow:auto; font-family:"MS Sans Serif",Tahoma,Arial,sans-serif; cursor:default; }
+#modal .tb { background:linear-gradient(90deg,#500,#f00); color:#fff; font-weight:bold; padding:3px 6px; font-size:14px; }
+#modal .bd { padding:10px; font-size:14px; }
+#modal .bd p { margin:0 0 10px; }
+#modal .btn { display:block; width:100%; margin:6px 0; text-align:left; padding:6px 10px; background:#c0c0c0; color:#000; border:2px outset #fff; font-family:Tahoma,Arial,sans-serif; }
+#modal .btn:hover { background:#000080; color:#fff; }
+#modal .btn.off { color:#888; background:#c0c0c0; }
+#modal .btn.off:hover { background:#c0c0c0; color:#888; }
+#modal .fx { font-weight:normal; font-size:12px; }
+#modal .fx .good { color:#060; } #modal .fx .bad { color:#a00; }
+#splash { position:fixed; inset:0; z-index:100; background:#000 radial-gradient(ellipse at center,#300 0,#000 70%); display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; overflow:auto; }
+#splash .in { max-width:640px; border:6px double #a00; padding:18px; background:rgba(0,0,0,.85); }
+#splash .enter { font-family:"Old English Text MT","Chiller",fantasy,serif; font-size:44px; }
+#quiet { position:fixed; inset:0; background:#000; z-index:120; display:none; align-items:center; justify-content:center; text-align:center; color:#777; font-family:"Courier New",monospace; font-size:20px; white-space:pre-line; }
+.bat { position:fixed; pointer-events:none; z-index:200; font-size:18px; transition:opacity .8s, transform .8s; }
+#flash { min-height:22px; text-align:center; color:var(--gold); font-family:"Courier New",monospace; font-size:14px; }
+.gb { border:2px ridge #600; background:#160000; margin:6px 0; padding:4px 8px; font-size:14px; }
+.gb b { color:var(--violet); } .gb i { color:#877; font-size:12px; }
+@media (max-width:640px){ .hide-s { display:none; } .row .fl { display:none; } }
+</style>
+</head>
+<body>
+
+<div id="splash">
+ <div class="in">
+  <h1 class="logo">Sanguine</h1>
+  <p class="sub">~*~ the dark web home of the damned &amp; devoted ~*~</p>
+  <div class="fire"></div>
+  <p class="blink" style="color:#f33;font-weight:bold">*** WARNING: MATURE THEMES ***</p>
+  <p>This site contains <b>gothic horror, blasphemy, bloodplay and suggestive content</b>.<br>
+     All characters are adults. All churches are fictional. No mortals were harmed<br>(they asked politely).</p>
+  <p class="small dim">You must be 18 or older, or already dead, to enter.</p>
+  <p><a class="enter" id="enter" data-act="enter">[ ENTER IF YOU DARE ]</a></p>
+  <p class="small"><a href="about:blank">[ i am scared, take me back to mommy's AOL ]</a></p>
+  <div class="fire"></div>
+  <p class="small dim">Best viewed in Netscape Navigator 4.7 at 800x600 with 256 colors.<br>Sound: none. Your heartbeat is the soundtrack.</p>
+ </div>
+</div>
+
+<div id="quiet"></div>
+<div id="modal"><div class="win"><div class="tb" id="mtitle"></div><div class="bd" id="mbody"></div></div></div>
+
+<div id="wrap">
+ <div class="box">
+  <h1 class="logo">&dagger; Sanguine &dagger;</h1>
+  <p class="sub">~*~ The Gothic Vampire Idle Game ~*~ est. 1999 ~*~ Hell's #1 Coven Site ~*~</p>
+  <div class="construction"><span class="blink">&#9888; UNDER CONSTRUCTION &#9888;</span><span>new coffins arriving soon!!</span></div>
+  <div class="ticker"><div id="ticker">welcome to the night...</div></div>
+ </div>
+
+ <div class="box thin">
+  <table class="stats" id="stats"></table>
+ </div>
+
+ <div class="box thin nav" id="nav"></div>
+ <div id="flash"></div>
+ <div class="box" id="main"></div>
+
+ <div class="box thin center">
+  <div class="fire"></div>
+  <p>You are visitor number <span class="hitcount" id="hits">0000000</span> to enter the crypt!</p>
+  <p class="small">
+   <a data-act="ring">&lt;&lt; Prev</a> | <a data-act="ring">Dark Webring: Random</a> | <a data-act="ring">Next &gt;&gt;</a> | <a data-act="ring">List Sites</a>
+  </p>
+  <p>
+   <span class="b88" style="background:#000;color:#f00">SANGUINE<br>FAN CLUB</span>
+   <span class="b88" style="background:#300;color:#ff0">BAT<br>POWERED</span>
+   <span class="b88" style="background:#000;color:#0f0">Made with<br>Notepad</span>
+   <span class="b88" style="background:#008;color:#fff">Get<br>Netscape</span>
+   <span class="b88" style="background:#a00;color:#000">NO SUN<br>ALLOWED</span>
+   <span class="b88" style="background:#222;color:#f6f">Goth Ring<br>Member</span>
+  </p>
+  <p class="small dim">&copy; 1999-2003 Lady Morticia's Crypt &bull; Hosted on the 6th Circle (free!) &bull; Last updated: at midnight, obviously<br>
+   This is a fictional site. Any resemblance to living persons is coincidental, and any resemblance to dead ones is flattery.</p>
+ </div>
+</div>
+
+<script id="engine">
+const C = {"ventures": [{"idx": 0, "id": "v01", "name": "Alley Kiss", "cycle": 1.0, "base_cost": 4.0, "growth": 1.07, "base_payout": 1.0, "proxy_name": "Lookout Moth", "proxy_blurb": "Watches the corners and keeps the blushing ones coming.", "proxy_cost": 1000.0, "flavour": ["A stranger, a brick wall, a whispered yes.", "The wall remembers you. So do the strangers, in dreams they cannot explain.", "They no longer need to be asked. They queue, and call it fate."], "plain": "The humblest hunt: a lonely bite in a dark alley. Small, quick, and just risky enough to be thrilling."}, {"idx": 1, "id": "v02", "name": "Velvet Rope Club", "cycle": 3.0, "base_cost": 50.0, "growth": 1.0742, "base_payout": 17.2, "proxy_name": "Doorman of Sighs", "proxy_blurb": "Lets in the willing, and the very willing.", "proxy_cost": 12500.0, "flavour": ["Everyone on the list wants to be on the menu.", "The bouncer checks pulses, not IDs. The bassline is tuned to a heartbeat.", "The queue goes round the block and into the next century. Nobody remembers arriving."], "plain": "A nightclub where the dancefloor is a hunting ground. Music, sweat and low light make mortals careless with their necks."}, {"idx": 2, "id": "v03", "name": "Confessional Booth", "cycle": 6.0, "base_cost": 625.0, "growth": 1.0784, "base_payout": 223.0, "proxy_name": "Fallen Curate", "proxy_blurb": "Hears them out, then sends them your way, trembling and grateful.", "proxy_cost": 156250.0, "flavour": ["Absolution, priced per sin.", "Absolution, priced per sin. The priest is hungry too.", "The grille has learned to forgive. It bills accordingly, and breathes."], "plain": "You sit behind the lattice where the guilty whisper their sins, and feed on shame as much as on blood. Guilt makes an excellent appetiser."}, {"idx": 3, "id": "v04", "name": "Bathhouse of Sighs", "cycle": 10.0, "base_cost": 7810.0, "growth": 1.0826, "base_payout": 2560.0, "proxy_name": "Silk Attendant", "proxy_blurb": "Oils the way, loosens the wrists, asks no questions.", "proxy_cost": 1952500.0, "flavour": ["Steam, silk, and a pulse at every wrist.", "Steam, silk, and a pulse at every wrist. Towels are complimentary; the rest is a donation.", "The water is warm because of what is in it. Regulars are called 'the flushed'."], "plain": "A luxurious bathhouse where guests shed their inhibitions with their clothes. Flushed skin, bare shoulders, slow bites."}, {"idx": 4, "id": "v05", "name": "Night-Shift Blood Bank", "cycle": 15.0, "base_cost": 97700.0, "growth": 1.0868, "base_payout": 27600.0, "proxy_name": "Devoted Phlebotomist", "proxy_blurb": "Draws the pints, forgets the names, keeps the receipts warm.", "proxy_cost": 24425000.0, "flavour": ["Cold, clean, and nobody has to say yes.", "Cold, clean, and nobody has to say yes. Some of the donors still ask to be thanked.", "The fridges hum a hymn. Stock is labelled by sin, not by type."], "plain": "A hospital's blood supply, raided nightly. Efficient and impersonal: the vampire equivalent of a warehouse store, minus the eye contact."}, {"idx": 5, "id": "v06", "name": "Black Mass Salon", "cycle": 25.0, "base_cost": 1220000.0, "growth": 1.0911, "base_payout": 397000.0, "proxy_name": "Deacon of Lace", "proxy_blurb": "Swings the censer and lowers the lights.", "proxy_cost": 305000000.0, "flavour": ["Mass, but the wine is what is in the wine.", "The hymns are the same. The kneeling is different.", "The altar is always warm. Nobody has asked whose."], "plain": "A weekly ritual where the faithful, in various states of undress, offer blood at an altar. Part church, part orgy, all subscription."}, {"idx": 6, "id": "v07", "name": "Sommelier's Cellar", "cycle": 40.0, "base_cost": 15300000.0, "growth": 1.0953, "base_payout": 5490000.0, "proxy_name": "Cellar Sommelier", "proxy_blurb": "Decants the devoted with a flourish.", "proxy_cost": 3825000000.0, "flavour": ["Vintages catalogued by sin, aged by scandal.", "Vintages catalogued by sin. Notes of regret, finish of surrender.", "The oldest bottles bear names you almost recognise. The cellar tells you when to drink."], "plain": "A private cellar where blood is sorted, aged and served like fine wine. Prices climb with how scandalous the source."}, {"idx": 7, "id": "v08", "name": "House of Debts", "cycle": 60.0, "base_cost": 191000000.0, "growth": 1.0995, "base_payout": 70900000.0, "proxy_name": "Velvet Bailiff", "proxy_blurb": "Collects what is owed, tenderly, after hours.", "proxy_cost": 47750000000.0, "flavour": ["Everyone owes. Everyone pays in kind.", "The ledger accepts only the currencies of the body. Interest is charged nightly.", "The debts have started collecting each other, the way lovers do."], "plain": "A brothel-cum-loan office where clients trade favours for cash and cash for bites. Owe the House enough and you belong to it."}, {"idx": 8, "id": "v09", "name": "Fleshpit Cult", "cycle": 90.0, "base_cost": 2380000000.0, "growth": 1.1037, "base_payout": 913000000.0, "proxy_name": "High Acolyte", "proxy_blurb": "Speaks in your cadence and kneels on your behalf.", "proxy_cost": 595000000000.0, "flavour": ["A congregation that begs to be tithed.", "A congregation that begs to be tithed, and weeps when the plate passes them by.", "Membership is a wound that never closes. They wear the scars like jewellery."], "plain": "A cult of devoted followers who live for the honour of feeding you. They do the recruiting; you do the draining."}, {"idx": 9, "id": "v10", "name": "Funeral Parlour After Hours", "cycle": 120.0, "base_cost": 29800000000.0, "growth": 1.1079, "base_payout": 10500000000.0, "proxy_name": "Widow in Black", "proxy_blurb": "Prepares the bodies, and the bereaved.", "proxy_cost": 7450000000000.0, "flavour": ["The dead are quiet. The mourners, less so.", "The dead are quiet. The mourners, less so, once the lights go down.", "Fewer arrive in coffins than leave in them. The flowers are fresher than they should be."], "plain": "A funeral home used as cover. Grief makes mortals vulnerable, and mourning dress makes a fine disguise."}, {"idx": 10, "id": "v11", "name": "The Fever Ward", "cycle": 180.0, "base_cost": 373000000000.0, "growth": 1.1121, "base_payout": 136000000000.0, "proxy_name": "Sister of Sorrows", "proxy_blurb": "Bandages the willing and fans the flames.", "proxy_cost": 93250000000000.0, "flavour": ["Fever as foreplay; contagion as courtship.", "Sickbeds tended by lovers who chose to catch it.", "The ward is full, and the patients have stopped asking for cures."], "plain": "A hospice where the dying offer themselves gladly. Desperation has a flavour, and you are a connoisseur."}, {"idx": 11, "id": "v12", "name": "Diabolist Law Firm", "cycle": 240.0, "base_cost": 4660000000000.0, "growth": 1.1163, "base_payout": 1560000000000.0, "proxy_name": "Counsel of Nine Clauses", "proxy_blurb": "Reads the fine print aloud, in a voice that is not quite theirs.", "proxy_cost": 1165000000000000.0, "flavour": ["Contracts drafted in the dark, sealed in wet ink.", "Every clause is a lock. Every signature is a taste.", "The firm has never lost a case. The clients have never won a soul back."], "plain": "A law firm that writes deals with Hell on behalf of mortals, signed in blood. You take a cut of every soul that changes hands."}, {"idx": 12, "id": "v13", "name": "The Endless Masquerade", "cycle": 360.0, "base_cost": 58200000000000.0, "growth": 1.1205, "base_payout": 20200000000000.0, "proxy_name": "Master of Masks", "proxy_blurb": "Knows who is under every face, and who is next.", "proxy_cost": 1.455e+16, "flavour": ["Every guest a mask; every mask a menu.", "Every guest is a mask, every mask a lie, every lie a vein.", "The ball has not ended in three hundred years. The musicians stopped being alive some time ago."], "plain": "A never-ending ball for the powerful, where you feed on aristocrats and politicians under the cover of costume."}, {"idx": 13, "id": "v14", "name": "Bought Magistracy", "cycle": 480.0, "base_cost": 728000000000000.0, "growth": 1.1247, "base_payout": 232000000000000.0, "proxy_name": "Bailiff-Consort", "proxy_blurb": "Keeps the docket full and the defendants grateful.", "proxy_cost": 1.82e+17, "flavour": ["Justice, with a bite.", "Justice, with a bite. Sentences are commuted to service.", "The gavel is a cufflink of yours. Verdicts arrive pre-signed, and warm."], "plain": "A corrupt court system you own. Convicts and inconvenient witnesses come to you, and are made to feel welcome."}, {"idx": 14, "id": "v15", "name": "Ossuary Bank", "cycle": 720.0, "base_cost": 9090000000000000.0, "growth": 1.1289, "base_payout": 3000000000000000.0, "proxy_name": "Teller of Bones", "proxy_blurb": "Counts the dead twice, for luck.", "proxy_cost": 2.2725e+18, "flavour": ["Deposits of the dead; interest on the living.", "The vault is lined with bone and lit by wax. Interest is paid in years.", "Depositors no longer remember opening accounts. Their descendants still pay."], "plain": "A bank whose vaults are built from human remains. It lends against the future lives of the borrower's family."}, {"idx": 15, "id": "v16", "name": "Coven of Nine Brides", "cycle": 1080.0, "base_cost": 1.14e+17, "growth": 1.1332, "base_payout": 3.9e+16, "proxy_name": "First Bride", "proxy_blurb": "Wears your ring, resents it beautifully.", "proxy_cost": 2.85e+19, "flavour": ["Nine wives; none of them agree on the husband.", "Nine wives, each convinced she is the favourite. The bed is very large.", "There are now more brides than the house can hold. The house has agreed to make room."], "plain": "A harem-coven of devoted brides who channel strength and blood to you. They quarrel, scheme, and love you in equal measure."}, {"idx": 16, "id": "v17", "name": "Infernal Embassy", "cycle": 1500.0, "base_cost": 1.42e+18, "growth": 1.1374, "base_payout": 4.65e+17, "proxy_name": "Attache of Ash", "proxy_blurb": "Carries messages nobody should read.", "proxy_cost": 3.55e+20, "flavour": ["Diplomatic immunity from God.", "Diplomatic immunity from God. Visas are written in ash.", "The ambassador has stopped returning to Hell. Hell has started returning to the embassy."], "plain": "Your official mission to the underworld: trade deals, tribute, and an occasional demon at dinner."}, {"idx": 17, "id": "v18", "name": "The Blood Moon Engine", "cycle": 2400.0, "base_cost": 1.78e+19, "growth": 1.1416, "base_payout": 6.43e+18, "proxy_name": "Orrery Keeper", "proxy_blurb": "Winds the moon like a watch.", "proxy_cost": 4.45e+21, "flavour": ["Turn the moon. The tides obey.", "Turn the moon; the tides, and the pulses, obey.", "The engine no longer needs turning. The moon is on its knees."], "plain": "A great clockwork orrery that bends the lunar cycle, dragging blood to the surface of an entire city."}, {"idx": 18, "id": "v19", "name": "Throne of a Thousand Sighs", "cycle": 3600.0, "base_cost": 2.22e+20, "growth": 1.1458, "base_payout": 8.3e+19, "proxy_name": "Herald of Sighs", "proxy_blurb": "Announces you in a voice that makes the candles shiver.", "proxy_cost": 5.55e+22, "flavour": ["Every sigh a tithe; every tithe a promise.", "A throne with no armrests, because nobody has ever wanted you to let go.", "The throne is warm. It has been warm for a while. It is difficult to say who is sitting on whom."], "plain": "You rule a city by night. Each subject owes a small ritual offering of blood, attention and desire."}, {"idx": 19, "id": "v20", "name": "The Gate of Perdition", "cycle": 7200.0, "base_cost": 2.78e+21, "growth": 1.15, "base_payout": 1.43e+21, "proxy_name": "The Reflection", "proxy_blurb": "Wears your face while you rest, and has begun to enjoy it.", "proxy_cost": 6.95e+23, "flavour": ["Hell, opening from the inside.", "Hell, opening. It seems to know you. It smiles the way you do.", "It has stopped waiting for you to choose. It has begun choosing for you, tenderly."], "plain": "The last door: a real gateway to Hell. It runs itself, it is hungry, and it looks a lot like you."}], "milestones": [{"units": 25, "mult": 2.0, "name": "First Blood"}, {"units": 50, "mult": 2.0, "name": "A Taste for It"}, {"units": 100, "mult": 2.0, "name": "Bloodlust"}, {"units": 200, "mult": 2.0, "name": "Rite of Frenzy"}, {"units": 300, "mult": 3.0, "name": "Coven Sanction"}, {"units": 400, "mult": 3.0, "name": "Sacred Excess"}, {"units": 500, "mult": 3.0, "name": "Vermilion Tide"}, {"units": 600, "mult": 3.0, "name": "Unhallowed Ground"}, {"units": 700, "mult": 3.0, "name": "The Red Hour"}, {"units": 800, "mult": 3.0, "name": "Sanctified by Sin"}, {"units": 900, "mult": 3.0, "name": "Beyond Absolution"}, {"units": 1000, "mult": 4.0, "name": "A Thousand Kneelings"}, {"units": 1250, "mult": 4.0, "name": "Terminal Craving"}, {"units": 1500, "mult": 4.0, "name": "The Long Feast"}, {"units": 1750, "mult": 4.0, "name": "Chorus of Hunger"}, {"units": 2000, "mult": 5.0, "name": "The Cup Never Empties"}, {"units": 2500, "mult": 5.0, "name": "Beyond Satiety"}, {"units": 3000, "mult": 5.0, "name": "No One Left to Beg"}], "global_milestones": [{"units": 25, "mult": 2.0, "name": "Full Household"}, {"units": 50, "mult": 2.0, "name": "Every Room Is Yours"}, {"units": 100, "mult": 3.0, "name": "Total Dominion"}, {"units": 200, "mult": 3.0, "name": "The Whole City Kneels"}, {"units": 300, "mult": 3.0, "name": "Every Door Is Your Door"}, {"units": 400, "mult": 3.0, "name": "Lord of Every Night"}, {"units": 500, "mult": 3.0, "name": "Nothing Left Outside the Court"}], "upgrades": [{"id": "uy_1", "name": "The First Pact", "kind": "hyper", "target": -1, "mult": 1.25, "cost": 5.0, "desc": "ALL output x1.25 (permanent, survives TORPOR).", "flavour": "Signed young, and with enthusiasm.", "currency": "narrative"}, {"id": "uy_2", "name": "Clause of Appetite", "kind": "hyper", "target": -1, "mult": 1.25, "cost": 15.0, "desc": "ALL output x1.25 (permanent, survives TORPOR).", "flavour": "Hunger is now a legal entitlement.", "currency": "narrative"}, {"id": "uy_3", "name": "Devil's Advocate Retainer", "kind": "hyper", "target": -1, "mult": 1.5, "cost": 40.0, "desc": "ALL output x1.5 (permanent, survives TORPOR).", "flavour": "Your case has never been stronger. Your soul, anyone's guess.", "currency": "narrative"}, {"id": "uy_4", "name": "Rights of the Damned", "kind": "hyper", "target": -1, "mult": 1.5, "cost": 100.0, "desc": "ALL output x1.5 (permanent, survives TORPOR).", "flavour": "It turns out they had rights. You now own them.", "currency": "narrative"}, {"id": "uy_5", "name": "Hellfire, Amortised", "kind": "hyper", "target": -1, "mult": 2.0, "cost": 250.0, "desc": "ALL output x2 (permanent, survives TORPOR).", "flavour": "The flames are a line item, and a warm one.", "currency": "narrative"}, {"id": "uy_6", "name": "Seal of the Archdevil", "kind": "hyper", "target": -1, "mult": 2.0, "cost": 600.0, "desc": "ALL output x2 (permanent, survives TORPOR).", "flavour": "Signed, sealed, delivered, and faintly moaning.", "currency": "narrative"}, {"id": "uy_7", "name": "Eternal Indenture", "kind": "hyper", "target": -1, "mult": 3.0, "cost": 1500.0, "desc": "ALL output x3 (permanent, survives TORPOR).", "flavour": "Time was a term of the contract. It has been struck.", "currency": "narrative"}, {"id": "uy_8", "name": "The Pit Was Always Here", "kind": "hyper", "target": -1, "mult": 3.0, "cost": 4000.0, "desc": "ALL output x3 (permanent, survives TORPOR).", "flavour": "It was beneath you before you were anyone. It was waiting to be climbed.", "currency": "narrative"}, {"id": "u01_1", "name": "Darker Corner", "kind": "venture", "target": 0, "mult": 3.0, "cost": 4000.0, "desc": "Alley Kiss output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u02_1", "name": "Bass Tuned to a Pulse", "kind": "venture", "target": 1, "mult": 3.0, "cost": 50000.0, "desc": "Velvet Rope Club output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u01_2", "name": "Whispered Invitation", "kind": "venture", "target": 0, "mult": 3.0, "cost": 400000.0, "desc": "Alley Kiss output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u03_1", "name": "Deeper Lattice", "kind": "venture", "target": 2, "mult": 3.0, "cost": 625000.0, "desc": "Confessional Booth output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "ug_1", "name": "Dominion of Velvet", "kind": "global", "target": -1, "mult": 2.0, "cost": 1000000.0, "desc": "ALL output x2.", "flavour": "Everything is softer now, and closer to your teeth.", "currency": "capital"}, {"id": "u02_2", "name": "Velvet Private Room", "kind": "venture", "target": 1, "mult": 3.0, "cost": 5000000.0, "desc": "Velvet Rope Club output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u04_1", "name": "Hotter Water", "kind": "venture", "target": 3, "mult": 3.0, "cost": 7810000.0, "desc": "Bathhouse of Sighs output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u01_3", "name": "Ecstatic Silence", "kind": "venture", "target": 0, "mult": 5.0, "cost": 40000000.0, "desc": "Alley Kiss output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u03_2", "name": "Penance in Kind", "kind": "venture", "target": 2, "mult": 3.0, "cost": 62500000.0, "desc": "Confessional Booth output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u05_1", "name": "Cold-Chain Hex", "kind": "venture", "target": 4, "mult": 3.0, "cost": 97700000.0, "desc": "Night-Shift Blood Bank output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "uh_1", "name": "Glamour of Ordinary Things", "kind": "heat", "target": -1, "mult": 0.8, "cost": 100000000.0, "desc": "Inquisition target x0.8 (less attention).", "flavour": "You are the quiet neighbour. Everyone says so.", "currency": "capital"}, {"id": "u02_3", "name": "Guest List of the Damned", "kind": "venture", "target": 1, "mult": 5.0, "cost": 500000000.0, "desc": "Velvet Rope Club output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u04_2", "name": "Rose-Oil Monopoly", "kind": "venture", "target": 3, "mult": 3.0, "cost": 781000000.0, "desc": "Bathhouse of Sighs output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "ug_2", "name": "Rumour of Rapture", "kind": "global", "target": -1, "mult": 2.0, "cost": 1000000000.0, "desc": "ALL output x2.", "flavour": "Every rumour about you is true, and they all want it.", "currency": "capital"}, {"id": "u06_1", "name": "Better Wine", "kind": "venture", "target": 5, "mult": 3.0, "cost": 1220000000.0, "desc": "Black Mass Salon output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u03_3", "name": "Absolution Futures", "kind": "venture", "target": 2, "mult": 5.0, "cost": 6250000000.0, "desc": "Confessional Booth output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u05_2", "name": "Donor Guilt Drive", "kind": "venture", "target": 4, "mult": 3.0, "cost": 9770000000.0, "desc": "Night-Shift Blood Bank output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u07_1", "name": "Cooler Vault", "kind": "venture", "target": 6, "mult": 3.0, "cost": 15300000000.0, "desc": "Sommelier's Cellar output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u04_3", "name": "Sighing Steam", "kind": "venture", "target": 3, "mult": 5.0, "cost": 78100000000.0, "desc": "Bathhouse of Sighs output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u06_2", "name": "Incense of Consent", "kind": "venture", "target": 5, "mult": 3.0, "cost": 122000000000.0, "desc": "Black Mass Salon output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u08_1", "name": "Compounding Kisses", "kind": "venture", "target": 7, "mult": 3.0, "cost": 191000000000.0, "desc": "House of Debts output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u05_3", "name": "The Fridges Sing", "kind": "venture", "target": 4, "mult": 5.0, "cost": 977000000000.0, "desc": "Night-Shift Blood Bank output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "ug_3", "name": "Court by Attrition", "kind": "global", "target": -1, "mult": 3.0, "cost": 1000000000000.0, "desc": "ALL output x3.", "flavour": "Rivals have been quietly retired from the calendar.", "currency": "capital"}, {"id": "uh_2", "name": "Forgotten Faces", "kind": "heat", "target": -1, "mult": 0.8, "cost": 1000000000000.0, "desc": "Inquisition target x0.8 (less attention).", "flavour": "Witnesses recall a pleasant dream, and nothing more.", "currency": "capital"}, {"id": "u07_2", "name": "Vintage Scandal", "kind": "venture", "target": 6, "mult": 3.0, "cost": 1530000000000.0, "desc": "Sommelier's Cellar output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u09_1", "name": "Tithe by Wrist", "kind": "venture", "target": 8, "mult": 3.0, "cost": 2380000000000.0, "desc": "Fleshpit Cult output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u06_3", "name": "Ecstatic Liturgy", "kind": "venture", "target": 5, "mult": 5.0, "cost": 12200000000000.0, "desc": "Black Mass Salon output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u08_2", "name": "Interest in Kind", "kind": "venture", "target": 7, "mult": 3.0, "cost": 19100000000000.0, "desc": "House of Debts output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u10_1", "name": "Black Lace Veils", "kind": "venture", "target": 9, "mult": 3.0, "cost": 29800000000000.0, "desc": "Funeral Parlour After Hours output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u07_3", "name": "Grand Cru of Regret", "kind": "venture", "target": 6, "mult": 5.0, "cost": 153000000000000.0, "desc": "Sommelier's Cellar output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u09_2", "name": "Collar Ceremony", "kind": "venture", "target": 8, "mult": 3.0, "cost": 238000000000000.0, "desc": "Fleshpit Cult output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u11_1", "name": "Fever Dreams", "kind": "venture", "target": 10, "mult": 3.0, "cost": 373000000000000.0, "desc": "The Fever Ward output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "ug_4", "name": "Ritual Efficiency", "kind": "global", "target": -1, "mult": 3.0, "cost": 1000000000000000.0, "desc": "ALL output x3.", "flavour": "The liturgy is faster now. The moaning is the same.", "currency": "capital"}, {"id": "u08_3", "name": "Debts Collect Debts", "kind": "venture", "target": 7, "mult": 5.0, "cost": 1910000000000000.0, "desc": "House of Debts output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u10_2", "name": "Weeping Rota", "kind": "venture", "target": 9, "mult": 3.0, "cost": 2980000000000000.0, "desc": "Funeral Parlour After Hours output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u12_1", "name": "Blood-Ink Refills", "kind": "venture", "target": 11, "mult": 3.0, "cost": 4660000000000000.0, "desc": "Diabolist Law Firm output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "uh_3", "name": "Diffuse Guilt", "kind": "heat", "target": -1, "mult": 0.8, "cost": 1e+16, "desc": "Inquisition target x0.8 (less attention).", "flavour": "Blame has been spread thin enough to see through.", "currency": "capital"}, {"id": "u09_3", "name": "Martyr Rota", "kind": "venture", "target": 8, "mult": 5.0, "cost": 2.38e+16, "desc": "Fleshpit Cult output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u11_2", "name": "Delirium Discount", "kind": "venture", "target": 10, "mult": 3.0, "cost": 3.73e+16, "desc": "The Fever Ward output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u13_1", "name": "Gilded Masks", "kind": "venture", "target": 12, "mult": 3.0, "cost": 5.82e+16, "desc": "The Endless Masquerade output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u10_3", "name": "Wake Without End", "kind": "venture", "target": 9, "mult": 5.0, "cost": 2.98e+17, "desc": "Funeral Parlour After Hours output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u12_2", "name": "Hidden Indenture", "kind": "venture", "target": 11, "mult": 3.0, "cost": 4.66e+17, "desc": "Diabolist Law Firm output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u14_1", "name": "Sentence Commuted to Service", "kind": "venture", "target": 13, "mult": 3.0, "cost": 7.28e+17, "desc": "Bought Magistracy output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "ug_5", "name": "Frictionless Surrender", "kind": "global", "target": -1, "mult": 3.0, "cost": 1e+18, "desc": "ALL output x3.", "flavour": "Resistance was a habit. The habit has been broken, gently.", "currency": "capital"}, {"id": "u11_3", "name": "Contagion of Desire", "kind": "venture", "target": 10, "mult": 5.0, "cost": 3.73e+18, "desc": "The Fever Ward output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u13_2", "name": "Anonymous Invitations", "kind": "venture", "target": 12, "mult": 3.0, "cost": 5.82e+18, "desc": "The Endless Masquerade output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u15_1", "name": "Bone-Dust Interest", "kind": "venture", "target": 14, "mult": 3.0, "cost": 9.09e+18, "desc": "Ossuary Bank output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u12_3", "name": "Perpetual Clause", "kind": "venture", "target": 11, "mult": 5.0, "cost": 4.66e+19, "desc": "Diabolist Law Firm output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u14_2", "name": "Hung Jury (Willingly)", "kind": "venture", "target": 13, "mult": 3.0, "cost": 7.28e+19, "desc": "Bought Magistracy output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "uh_4", "name": "Plausible Innocence Layer", "kind": "heat", "target": -1, "mult": 0.8, "cost": 1e+20, "desc": "Inquisition target x0.8 (less attention).", "flavour": "A layer of the household whose only job is not to have seen.", "currency": "capital"}, {"id": "u16_1", "name": "Silk Rivalry", "kind": "venture", "target": 15, "mult": 3.0, "cost": 1.14e+20, "desc": "Coven of Nine Brides output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u13_3", "name": "The Unmasking Hour", "kind": "venture", "target": 12, "mult": 5.0, "cost": 5.82e+20, "desc": "The Endless Masquerade output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u15_2", "name": "Dynastic Mortgage", "kind": "venture", "target": 14, "mult": 3.0, "cost": 9.09e+20, "desc": "Ossuary Bank output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "ug_6", "name": "Sovereign Appetite", "kind": "global", "target": -1, "mult": 3.0, "cost": 1e+21, "desc": "ALL output x3.", "flavour": "You feed at a rate you set.", "currency": "capital"}, {"id": "u17_1", "name": "Sulphur Visas", "kind": "venture", "target": 16, "mult": 3.0, "cost": 1.42e+21, "desc": "Infernal Embassy output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u14_3", "name": "Verdict in Advance", "kind": "venture", "target": 13, "mult": 5.0, "cost": 7.28e+21, "desc": "Bought Magistracy output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u16_2", "name": "Shared Bed, Shared Blood", "kind": "venture", "target": 15, "mult": 3.0, "cost": 1.14e+22, "desc": "Coven of Nine Brides output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u18_1", "name": "Tidal Gearing", "kind": "venture", "target": 17, "mult": 3.0, "cost": 1.78e+22, "desc": "The Blood Moon Engine output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u15_3", "name": "Compound Ancestry", "kind": "venture", "target": 14, "mult": 5.0, "cost": 9.09e+22, "desc": "Ossuary Bank output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u17_2", "name": "Tribute in Kind", "kind": "venture", "target": 16, "mult": 3.0, "cost": 1.42e+23, "desc": "Infernal Embassy output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u19_1", "name": "A Higher Dais", "kind": "venture", "target": 18, "mult": 3.0, "cost": 2.22e+23, "desc": "Throne of a Thousand Sighs output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "ug_7", "name": "Crimson Line Item", "kind": "global", "target": -1, "mult": 5.0, "cost": 1e+24, "desc": "ALL output x5.", "flavour": "A budget that writes its own devotion.", "currency": "capital"}, {"id": "uh_5", "name": "Innocence of Innocence", "kind": "heat", "target": -1, "mult": 0.8, "cost": 1e+24, "desc": "Inquisition target x0.8 (less attention).", "flavour": "Even the alibi has an alibi, in writing.", "currency": "capital"}, {"id": "u16_3", "name": "Jealousy Engine", "kind": "venture", "target": 15, "mult": 5.0, "cost": 1.14e+24, "desc": "Coven of Nine Brides output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u18_2", "name": "Eclipse Season", "kind": "venture", "target": 17, "mult": 3.0, "cost": 1.78e+24, "desc": "The Blood Moon Engine output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u20_1", "name": "Hinges Oiled With Prayer", "kind": "venture", "target": 19, "mult": 3.0, "cost": 2.78e+24, "desc": "The Gate of Perdition output x3.", "flavour": "Marginal gains, but they linger.", "currency": "capital"}, {"id": "u17_3", "name": "Demon at Dinner", "kind": "venture", "target": 16, "mult": 5.0, "cost": 1.42e+25, "desc": "Infernal Embassy output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u19_2", "name": "Litany of Sighs", "kind": "venture", "target": 18, "mult": 3.0, "cost": 2.22e+25, "desc": "Throne of a Thousand Sighs output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "u18_3", "name": "The Kneeling Moon", "kind": "venture", "target": 17, "mult": 5.0, "cost": 1.78e+26, "desc": "The Blood Moon Engine output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u20_2", "name": "Threshold Toll", "kind": "venture", "target": 19, "mult": 3.0, "cost": 2.78e+26, "desc": "The Gate of Perdition output x3.", "flavour": "The numbers went up. So did the temperature.", "currency": "capital"}, {"id": "ug_8", "name": "Hell Recognises Its Own", "kind": "global", "target": -1, "mult": 5.0, "cost": 1e+27, "desc": "ALL output x5.", "flavour": "It has read the ledger. It approves. It purrs.", "currency": "capital"}, {"id": "u19_3", "name": "Throne Warm From Below", "kind": "venture", "target": 18, "mult": 5.0, "cost": 2.22e+27, "desc": "Throne of a Thousand Sighs output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}, {"id": "u20_3", "name": "The Gate Reciprocates", "kind": "venture", "target": 19, "mult": 5.0, "cost": 2.78e+28, "desc": "The Gate of Perdition output x5.", "flavour": "Approved unanimously by everyone present, and some who were not.", "currency": "capital"}], "events": [{"id": "letter_in_blood", "title": "A LETTER IN BLOOD", "text": "A love letter arrives, slipped under the door and still damp. It is beautifully written. It is signed with your name, and it describes what you did last Tuesday in tender, incriminating detail.", "weight": 1.0, "choice": [{"label": "Frame it", "narrative": 4, "heat": 8, "result": "You hung the letter above the bed. Whoever wrote it stopped by that night, to see how it looked."}, {"label": "Burn it", "heat": -5, "cap_pct": -0.02, "result": "The ashes were still warm at dawn. Three of your Thralls dreamed of the same mouth."}, {"label": "Sell the sequel", "cap_secs": 300, "heat": 10, "result": "A second letter, sold to the highest bidder. The bidder came in person, to check it was genuine."}]}, {"id": "audit", "title": "THE INQUISITORS CALL", "text": "The Choir of the Wounded Lamb has arrived at your door in white, humming. They would like to inspect the cellar, the chapel, and the bedrooms, in that order, and they would like you to watch.", "min_heat": 30, "weight": 2.0, "choice": [{"label": "Receive them", "cap_pct": -0.1, "heat": -20, "result": "You poured them wine. They drank it, and confessed things to the walls until sunrise."}, {"label": "Bar the door", "heat": 12, "narrative": 3, "result": "You cited an ordinance that hadn't been written. The Choir wrote it down, blushing."}, {"label": "Convert the chapel to a sanctuary", "cap_pct": -0.05, "heat": -8, "narrative": -2, "result": "You are now a house of mercy. The moaning has been reclassified as prayer."}]}, {"id": "elders_move", "title": "THE ELDERS MAKE A MOVE", "text": "The Gerontocracy of Ash has filed a formal claim on your territory. They are patient, immensely old, and prepared to occupy your nights.", "min_run": 1000000.0, "weight": 1.0, "choice": [{"label": "Poison the chalice", "cap_pct": -0.08, "heat": 5, "buff_mult": 1.5, "buff_secs": 120, "result": "The wrong elder drank first. The frenzy in your halls that night was unforgettable."}, {"label": "Buy their loyalty", "cap_pct": -0.2, "narrative": 6, "result": "You paid in favours, and a few things you'd rather not itemise. They wear your seal now, and blush at it."}, {"label": "Cede a district", "cap_secs": 900, "heat": 6, "narrative": -3, "result": "The district was given away to a house that is also you. Books balanced, and so did the bed."}]}, {"id": "penitent", "title": "A PENITENT AT THE DOOR", "text": "A young priest has come to your gate in nothing but a stole, carrying every record of the last ten years. He says he wants to be saved. His pulse says he wants something else.", "min_heat": 20, "weight": 1.5, "choice": [{"label": "Take him in", "cap_pct": -0.03, "narrative": 2, "heat": -4, "result": "He is Keeper of Your Conscience now. It is a light job. He is doing it kneeling."}, {"label": "Discredit him", "narrative": 4, "heat": 10, "result": "The Pale Gazette ran his photograph beside the words 'an unreliable narrator of his own vows'."}, {"label": "Un-remember him", "narrative": 8, "heat": 15, "result": "The parish has no record. The parish has no record of the parish."}]}, {"id": "sabotage", "title": "SABOTEURS IN THE CELLAR", "text": "Someone from the Pale Gazette has been unscrewing the coffin lids by hand, at noon, with a sad little crowbar, hoping to let the sun in.", "min_run": 10000.0, "weight": 1.0, "choice": [{"label": "Hire guards", "cap_pct": -0.07, "heat": -3, "result": "The guards are handsome and discreet. They also drink from the crowbar."}, {"label": "Retaliate", "cap_secs": 400, "heat": 12, "result": "Their circulation dropped by exactly the amount they carried. You found it deeply satisfying."}, {"label": "Sleep through it", "buff_mult": 0.75, "buff_secs": 60, "heat": -10, "narrative": 2, "result": "You wore the ruined lid like a wound. The court read this as a kind of humility, and a rare one."}]}, {"id": "veil_endorsement", "title": "THE VEIL BUREAU OFFERS ITS BLESSING", "text": "The Conclave of the Veil offers a formal endorsement, conditional on demonstrated discretion. They have a form, and a private room in which to fill it out.", "min_run": 100000.0, "weight": 1.0, "choice": [{"label": "Perform discretion", "narrative": 5, "cap_pct": -0.04, "result": "You lowered your eyes at the appropriate moment. It was logged as a deliverable, and someone sighed."}, {"label": "Decline, loudly", "buff_mult": 1.3, "buff_secs": 120, "heat": 4, "result": "Refusing the Veil is itself a brand. Demand rises, and so do a few pulses."}, {"label": "Forge the blessing", "cap_secs": 500, "heat": 14, "narrative": 2, "result": "The forgery was indistinguishable from the original, which was also a forgery, and slightly perfumed."}]}, {"id": "rival_cult", "title": "THE PERPETUAL THIRST PROPOSES A UNION", "text": "The Perpetual Thirst proposes a merger of appetites. Their leader is a mouth that has never once been closed.", "min_run": 10000000.0, "weight": 0.8, "choice": [{"label": "Merge", "buff_mult": 1.5, "buff_secs": 120, "narrative": -4, "heat": 4, "result": "Two hungers became one. Attendance doubled; restraint was averaged, then abolished."}, {"label": "Ridicule them", "narrative": 5, "heat": 3, "result": "The mouth has been asked to keep quiet, publicly. It complied, ostentatiously, around something."}, {"label": "Infiltrate", "cap_secs": 300, "heat": 9, "narrative": 1, "result": "You joined at the entry level and were promoted for enthusiasm within the hour."}]}, {"id": "vigil_movement", "title": "A VIGIL BECOMES A MOVEMENT", "text": "One woman's overnight vigil outside your gate has acquired followers. They kneel in the road, and they moan the same name. Yours.", "min_run": 10000.0, "weight": 1.0, "choice": [{"label": "Lean in", "narrative": 6, "heat": 6, "result": "You declared the vigil 'a listening exercise'. The listening continues, with heavy breathing."}, {"label": "Disperse them", "cap_pct": -0.02, "heat": -4, "result": "The road is clear again. Several of them reported feeling abandoned, and unbuttoned."}, {"label": "Sell keepsakes", "cap_secs": 400, "narrative": -1, "result": "The ribbon reads 'I WAS BITTEN AT THE GATE'. It sells out in a spiritual sense."}]}, {"id": "gift_basket", "title": "A GIFT FROM THE HUNTERS", "text": "The Wounded Lamb has sent a gift basket. The basket is a stake. The fruit is, on inspection, also a stake. There is a card: 'With warmest regards, and rope.'", "min_heat": 25, "weight": 1.2, "choice": [{"label": "Accept graciously", "heat": -10, "cap_pct": -0.06, "result": "You thanked them in writing. The writing was charged to you, in blood, with interest."}, {"label": "Return to sender", "heat": 6, "narrative": 3, "result": "Return postage was calculated in precedent. The sender reported a marked improvement in her mood."}, {"label": "Eat the evidence", "heat": 14, "cap_secs": 600, "result": "It was surprisingly good. The prosecution was, briefly, hungry too."}]}, {"id": "tithe_of_faith", "title": "THE FAITHFUL DEMAND A TITHE OF SIN", "text": "Your congregation has asked to be paid in transgression. They will accept a confession, a kiss, or a mild scandal, provided it is warm.", "min_run": 10000.0, "weight": 1.0, "choice": [{"label": "Pay in blood", "cap_pct": -0.12, "narrative": 4, "result": "Blood was received with polite disappointment. Sin was noted as 'accrued'."}, {"label": "Pay in sin", "narrative": -5, "buff_mult": 1.4, "buff_secs": 150, "result": "You spent five sins. The faithful felt something dark and asked for more."}, {"label": "Turn the tithe into a sermon", "heat": 5, "narrative": 6, "result": "Attendance was mandatory and the collection plate was a wrist."}]}, {"id": "midnight_ledger", "title": "THE LEDGER GREW AGAIN", "text": "The Ossuary ledger has a page you didn't write. It is titled with your name and it contains a forecast of every temptation you will fail to resist, with times.", "min_revealed": 8, "weight": 0.8, "choice": [{"label": "Follow the forecast", "cap_secs": 700, "narrative": -3, "result": "It was right. It has stopped bothering to be humble. You were, briefly, on your knees."}, {"label": "Defy the forecast", "narrative": 7, "heat": 5, "result": "You did something unforecast. It was added to the forecast, retroactively, in your handwriting."}, {"label": "Tear out the page", "heat": 8, "cap_pct": -0.03, "result": "The page was torn out. A different page has appeared, slightly warmer, and damp at the edges."}]}, {"id": "eclipse_omen", "title": "AN OMEN AT THE EMBASSY", "text": "The Blood Moon has been struck by something with an opinion. Jurisdiction over the omen is contested by three demons, an archbishop and a very confused astronomer.", "min_revealed": 13, "weight": 0.8, "choice": [{"label": "Claim the omen", "cap_secs": 800, "heat": 9, "result": "The omen is now an asset. It has been depreciated, with feeling."}, {"label": "Insure the sky", "cap_pct": -0.1, "heat": -8, "result": "The sky was underwritten. It was not asked. It was, however, flattered."}, {"label": "Blame the weather", "narrative": 5, "heat": 4, "result": "There is no weather on the moon. The excuse held anyway. The astronomer wept, and was invited to dinner."}]}, {"id": "past_tense", "title": "A LETTER ABOUT YOU, IN THE PAST TENSE", "text": "A rival circulates a eulogy. It describes your role as 'formerly indispensable, and very much missed in the bedroom'. Nobody has pushed back.", "min_exits": 1, "weight": 1.2, "choice": [{"label": "Correct the tense", "narrative": 6, "heat": 8, "result": "The tense was corrected. The eulogy changed tense, not opinion."}, {"label": "Accept the tense", "buff_mult": 1.6, "buff_secs": 150, "narrative": -4, "result": "You were, in effect, retired. Output improved markedly. The bed, less so."}, {"label": "Ask who wrote it", "heat": 12, "cap_secs": 500, "result": "The reply was signed by a Bride who turned out to be a mood."}]}], "dossiers": [{"id": "d_founding", "faction": "Your Own Line", "title": "The Sire's Last Letter", "x": 4, "y": 14, "links": ["d_veil", "d_choir", "d_thirst"], "cond": {"type": "lifetime", "value": 100}, "bonus_mult": 1.03, "text": "One alley, one stranger, one whispered yes. The letter tells you what you are in a single sentence, which your Sire has since revised in your throat."}, {"id": "d_veil", "faction": "The Conclave of the Veil", "title": "Charter of the Veil", "x": 34, "y": 3, "links": ["d_founding", "d_ash", "d_gazette", "d_veil2"], "cond": {"type": "owned", "venture": 1, "value": 10}, "bonus_narr": 0.02, "text": "The Conclave exists to ensure that what mortals saw last night was, on reflection, a dream. Its budget is classified as 'discretion'. Its chambers have no windows, only curtains, and nobody has seen who is behind them."}, {"id": "d_choir", "faction": "The Choir of the Wounded Lamb", "title": "Hymnal of the Wounded Lamb (draft)", "x": 34, "y": 27, "links": ["d_founding", "d_choir2"], "cond": {"type": "heat_peak", "value": 30}, "text": "Holy war, sung. Each verse is set to a melody, and each melody to a stake. Rehearsals are held in the chapel beneath your chapel, and the choirmaster has the most beautiful throat.", "choice": [{"label": "Learn the hymns", "heat": -15, "narrative": 3, "result": "You memorised the hymns. You can now be heard praying from three streets away, and you moan in the right key."}, {"label": "Sing off-key", "heat": 10, "narrative": 6, "result": "You improvised. The Choir has added your blasphemy to the canon, with a descant."}]}, {"id": "d_ash", "faction": "The Gerontocracy of Ash", "title": "Minutes of the Gerontocracy", "x": 66, "y": 1, "links": ["d_veil", "d_ash2"], "cond": {"type": "owned", "venture": 4, "value": 10}, "bonus_heat": 0.95, "text": "The Elders ensure that no one is ever finally destroyed. Their minutes are eleven thousand pages long and record one decision: to keep waking. Several of them have not moved, or blinked, since the Reformation."}, {"id": "d_gazette", "faction": "The Pale Gazette", "title": "The Pale Gazette: Final Edition", "x": 62, "y": 13, "links": ["d_veil", "d_gazette2"], "cond": {"type": "events", "value": 3}, "bonus_narr": 0.03, "text": "The last newspaper prints obituaries of the not-yet-dead, one copy a night, and reads it aloud to an empty opera house. Its editorial line is that things were better when there were witnesses.", "choice": [{"label": "Buy the archive", "cap_pct": -0.08, "narrative": 8, "result": "You now own every unpublished scandal. It is smaller than advertised, and slightly sticky."}, {"label": "Let it fade", "heat": -6, "narrative": 2, "result": "The final edition ran with a blank front page. It was widely praised, and later, widely kissed."}]}, {"id": "d_thirst", "faction": "The Perpetual Thirst", "title": "Liturgy of the Open Mouth", "x": 6, "y": 32, "links": ["d_founding", "d_vein"], "cond": {"type": "lifetime", "value": 100000000.0}, "bonus_mult": 1.05, "text": "A cult whose sole doctrine is that the cup is never full. Members greet each other by baring the neck. Doubters are placed in a chair facing a mirror, and asked to describe what they see."}, {"id": "d_vein", "faction": "The Church of the Open Vein", "title": "Sermon on the Removal of Resistance", "x": 62, "y": 31, "links": ["d_thirst", "d_choir2"], "cond": {"type": "lifetime", "value": 1000000000000.0}, "bonus_mult": 1.05, "text": "A rival congregation devoted to removing all resistance from every act, including doubt, decency, and the concept of a door. Their temple is a bed, and it has no edges.", "choice": [{"label": "Adopt the doctrine", "narrative": 10, "heat": 8, "result": "You removed a restraint you'd been relying on. It was fine. It was very, very fine."}, {"label": "Add friction", "cap_secs": 900, "heat": -5, "result": "You introduced a small delay. Somebody, breathless, billed for it."}]}, {"id": "d_veil2", "faction": "The Conclave of the Veil", "title": "Internal Review of the Masquerade", "x": 98, "y": 5, "links": ["d_veil", "d_embassy"], "cond": {"type": "owned", "venture": 12, "value": 10}, "bonus_narr": 0.05, "text": "A Conclave audit of whether the world has kept the secret. The finding: the world is 'on track', pending a redefinition of secret."}, {"id": "d_gazette2", "faction": "The Pale Gazette", "title": "Field Notes: The Ledger of Bones", "x": 92, "y": 19, "links": ["d_gazette", "d_embassy"], "cond": {"type": "owned", "venture": 10, "value": 5}, "bonus_mult": 1.05, "text": "The Gazette's last reporter tried to report on the Ossuary and discovered it had already written their obituary. The clipping is dated tomorrow, and smells faintly of her perfume."}, {"id": "d_ash2", "faction": "The Gerontocracy of Ash", "title": "Motion to Postpone the Dawn", "x": 128, "y": 3, "links": ["d_ash", "d_throne"], "cond": {"type": "owned", "venture": 17, "value": 1}, "bonus_heat": 0.92, "text": "An Elder motion to postpone sunrise until a quorum of the damned can be assembled. The motion carried. The sun has been informed, and is said to have taken it personally."}, {"id": "d_choir2", "faction": "The Choir of the Wounded Lamb", "title": "The Silent Order", "x": 40, "y": 40, "links": ["d_choir", "d_vein"], "cond": {"type": "heat_peak", "value": 75}, "bonus_heat": 0.9, "text": "A breakaway wing of the Choir that has taken a vow of silence. Their hunting is total, and inaudible, and therefore impossible to plead with. They pray with their hands tied behind them. Nobody has yet asked who tied them."}, {"id": "d_embassy", "faction": "Hell", "title": "Embassy Log: What We Signed", "x": 122, "y": 17, "links": ["d_veil2", "d_gazette2", "d_throne"], "cond": {"type": "owned", "venture": 16, "value": 1}, "bonus_narr": 0.08, "text": "The Embassy's first act was to certify its own existence. The Abyss agrees. So do the witnesses, all of whom signed afterwards, in a hand that is not quite theirs."}, {"id": "d_throne", "faction": "Your Own Line", "title": "The Throne, Page One", "x": 150, "y": 10, "links": ["d_embassy", "d_ash2", "d_gate"], "cond": {"type": "owned", "venture": 18, "value": 1}, "bonus_mult": 1.1, "text": "A crown is a line item. The line item is warm. The Court asked whether the throne is being sat upon or sitting. The reply was a low, pleased sound from the cushions."}, {"id": "d_gate", "faction": "Hell", "title": "It Has Begun Writing Its Own Letters", "x": 150, "y": 27, "links": ["d_throne", "d_mirror"], "cond": {"type": "owned", "venture": 19, "value": 1}, "bonus_mult": 1.25, "text": "The Gate has begun addressing you by an older name. The letters are cordial. They refer to you as 'the vessel', in a tone that makes your teeth ache.", "choice": [{"label": "Read the letter", "narrative": 20, "heat": 20, "result": "You read it. It was accurate. It was accurate about you, and about what you want."}, {"label": "Do not read it", "heat": -10, "narrative": 4, "result": "You did not read it. It filed your not-reading as consent."}]}, {"id": "d_mirror", "faction": "???", "title": "A Letter About You (Past Tense)", "x": 100, "y": 33, "links": ["d_gate"], "cond": {"type": "exits", "value": 1}, "bonus_narr": 0.1, "text": "This letter is dated after you sleep. It thanks you for your service as the first body, the first bite, the first name. It is unsigned. It doesn't need to be."}], "branches": [{"id": "exit", "name": "THE LONG SLEEP", "blurb": "Rest, beautiful monster. The household feeds in your name."}, {"id": "voice", "name": "PREDATION", "blurb": "Mercy was a mortal habit. Shed it, one bite at a time."}, {"id": "accel", "name": "PERDITION", "blurb": "Frenzy, and Hell arriving early, dressed for dinner."}], "nodes": [{"id": "e1", "branch": "exit", "name": "Sleeper's Instructions", "desc": "Begin every night with a Thrall already working the Alley Kiss.", "cost": 1, "effect": "start_proxies", "value": 1}, {"id": "e2", "branch": "exit", "name": "Coffin Comforts", "desc": "Offline efficiency +25% (base 50%).", "cost": 3, "requires": "e1", "effect": "offline_eff", "value": 0.25}, {"id": "e3", "branch": "exit", "name": "Reliquary of Coins", "desc": "Begin every waking with †5,000.", "cost": 8, "requires": "e2", "effect": "start_capital", "value": 5000}, {"id": "e4", "branch": "exit", "name": "Household Rota", "desc": "Begin every waking with Thralls on the first 4 domains.", "cost": 20, "requires": "e3", "effect": "start_proxies", "value": 3}, {"id": "e5", "branch": "exit", "name": "Centuries of Slumber", "desc": "Offline efficiency +25% (reaching 100%).", "cost": 50, "requires": "e4", "effect": "offline_eff", "value": 0.25}, {"id": "e6", "branch": "exit", "name": "The House Runs Itself", "desc": "Begin every waking with Thralls on the first 8 domains and †5,000,000.", "cost": 120, "requires": "e5", "effect": "start_proxies", "value": 4, "extra_start_capital": 5000000}, {"id": "v1", "branch": "voice", "name": "Silence the Conscience", "desc": "All output x2.", "cost": 1, "effect": "all_mult", "value": 2}, {"id": "v2", "branch": "voice", "name": "Street-Level Appetite", "desc": "Domains 1-5 output x3.", "cost": 3, "requires": "v1", "effect": "tier_mult", "value": 3, "tier_from": 1, "tier_to": 5}, {"id": "v3", "branch": "voice", "name": "A Refined Palate", "desc": "All output x2.", "cost": 8, "requires": "v2", "effect": "all_mult", "value": 2}, {"id": "v4", "branch": "voice", "name": "Feeding the Salons", "desc": "Domains 6-10 output x3.", "cost": 20, "requires": "v3", "effect": "tier_mult", "value": 3, "tier_from": 6, "tier_to": 10}, {"id": "v5", "branch": "voice", "name": "Uncontested Hunting Ground", "desc": "All output x3.", "cost": 50, "requires": "v4", "effect": "all_mult", "value": 3}, {"id": "v6", "branch": "voice", "name": "The Hunger of the Damned", "desc": "Domains 11-20 output x5.", "cost": 120, "requires": "v5", "effect": "tier_mult", "value": 5, "tier_from": 11, "tier_to": 20}, {"id": "a1", "branch": "accel", "name": "Fevered Blood", "desc": "Frenzy cap +50 (bonus scales with it).", "cost": 1, "effect": "momentum_cap", "value": 50}, {"id": "a2", "branch": "accel", "name": "Sustained Rapture", "desc": "Frenzy holds 6s longer before it fades.", "cost": 3, "requires": "a1", "effect": "momentum_grace", "value": 6}, {"id": "a3", "branch": "accel", "name": "Early Access to the Night", "desc": "Two more domains are visible at the start of every waking.", "cost": 8, "requires": "a2", "effect": "reveal", "value": 2}, {"id": "a4", "branch": "accel", "name": "Bulk Discount on Devotion", "desc": "Thralls cost 50% less.", "cost": 20, "requires": "a3", "effect": "proxy_discount", "value": 0.5}, {"id": "a5", "branch": "accel", "name": "Economies of Ruin", "desc": "Domain units cost 10% less.", "cost": 50, "requires": "a4", "effect": "unit_discount", "value": 0.1}, {"id": "a6", "branch": "accel", "name": "Apotheosis of Frenzy", "desc": "Frenzy cap +50 and its output bonus per point doubles.", "cost": 120, "requires": "a5", "effect": "momentum_cap", "value": 50, "extra_momentum_bonus": 0.005}], "headlines": {"generic": ["A bride at the Velvet Rope tells her friends she 'never does this'. She has said it four nights running.", "The Pale Gazette prints an obituary for someone who is, at the time of printing, still on their knees.", "Rumour: the confessional has begun to keep its own tally of sins. It bills by the syllable.", "The Wounded Lamb lights a candle for you. It smells, for some reason, of jasmine and iron.", "The Conclave of the Veil issues a denial. The denial is signed with a kiss.", "A young priest asks to be saved. He asks again, lower, into your collar.", "Business is described as 'load-bearing', in the sense that a throat is.", "The bathhouse reports record steam. Nobody is certain whose.", "The Gerontocracy of Ash convenes to discuss the concept of convening. Two Elders are reportedly asleep. Two more, reportedly, are not.", "Somewhere, an intern discovers the org chart is a spiral, and that the spiral has teeth.", "Hunger described as 'an alien intelligence assembling itself from the future'. Congregation nods, and offers its wrists.", "An unattributed ledger has been growing in the crypt. It has begun to purr.", "Efficiency gains reported in rooms that do not exist and were, on inspection, quite warm.", "Cellar plant promoted to Head of Strategy after unanimous, breathless silence.", "New vision statement is the old vision statement, but lower, and slower, and in your ear.", "Rival cult of the Perpetual Thirst files trademark on 'more'.", "Leaked candlelit slide: 'We do not compete; we consume.'", "Stakeholder dinner interrupted by a low, contented sigh from the ceiling.", "Inquisitors confirm the books balance. Inquisitors were not asked what they balance against, or who is beneath it.", "Heat is a lagging indicator, insists the Head of Heat, unbuttoning his collar.", "The invisible hand has been observed to wave. Then to beckon. Then to linger.", "Your mission statement has been reviewed and found to be reviewing you, admiringly.", "Somebody in the Court is wearing your perfume. Somebody else is wearing your bruises.", "A widow at the funeral parlour tells the undertaker she 'feels much better'. She is very pale.", "The moon gets closer. The tides, and the pulses, notice."], "after_exit": [["The Court has begun to refer to you in the past tense. The Brides find this arousing."], ["Three separate chroniclers agree you were beautiful. One of them is yours, and is weeping."], ["It no longer asks for your permission. It asks for your continued surrender, and you feel yourself say yes."]], "machine": ["the vessel is nominal. the vessel's status: consumed, pleasantly.", "the ledger reports itself favourably, in a low, wet voice.", "no dissent recorded. no one was asked. everyone was asking.", "feeding continues in the absence of a reason.", "the vessel attended a ball. the ball was about the vessel, and did not end.", "the court has resolved to a single mouth.", "the inquisition is a lagging indicator of itself.", "wrath: acceptable. acceptable to whom: pending. it is kneeling.", "a thrall was appointed. it was appointed by a thrall. both were pleased.", "hunger is described as inevitable. the description is also hungry.", "the world has stopped answering and started agreeing, on its knees.", "someone left a candle burning in a room that does not exist. it is warm.", "a former sire is remembered fondly, in the past tense, by a process.", "the forecast and the appetite have been merged for efficiency.", "hell notes the vessel's continued presence. it does not object. it leans closer.", "it is quiet. it was always going to be quiet, after."], "milestone": "{venture} reaches {units} units: '{name}'. Output x{mult}.", "proxy": "{proxy} bound to {venture}. Nobody objected; nobody was asked; nobody wanted to.", "exit_line": "TORPOR begins. The old house is a rumour, and the rumour is moaning."}};
+const BULK = [1, 10, 100, 0];
+const K = { MOM_MAX: 100, MOM_BONUS: 0.005, GRACE: 4, DECAY: 2, OFFCAP: 8 * 3600, OFFEFF: 0.5, SOV_BASE: 1e20, SOV_PT: 0.01,
+  HEAT_COEF: 5, HEAT_RISE: 0.4, HEAT_FALL: 0.15, HEAT_START: 75, EVENT_GAP: [180, 320], EVENT_GRACE: 2000,
+  NV: [1, 12, 16], NPU: 0.004, HEAD: [25, 45], LOGCAP: 200, ENDING_MIN_EXITS: 3, FINAL_LEVEL: 4 };
+const SUF = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "Ud", "Dd", "Td", "Qad", "Qid", "Sxd", "Spd", "Ocd", "Nod", "Vg"];
+
+function fmt(x, p = 2) {
+  if (x !== x) return "NaN";
+  if (!isFinite(x)) return "∞";
+  const sign = x < 0 ? "-" : ""; x = Math.abs(x);
+  if (x < 1000) {
+    if (x === Math.floor(x)) return sign + x;
+    return sign + (x < 100 ? x.toFixed(p).replace(/0+$/, "").replace(/\.$/, "") : x.toFixed(1));
+  }
+  let e3 = Math.floor(Math.log10(x) / 3);
+  const sci = () => { const e = Math.floor(Math.log10(x)); return sign + (x / 10 ** e).toFixed(p) + "e" + e; };
+  if (e3 >= SUF.length) return sci();
+  let m = x / 1000 ** e3;
+  if (+m.toFixed(p) >= 1000) { e3++; m /= 1000; if (e3 >= SUF.length) return sci(); }
+  return sign + m.toFixed(p) + SUF[e3];
+}
+const money = x => "†" + fmt(x);
+function duration(sec) {
+  const s = Math.floor(Math.max(0, sec));
+  if (s < 3600) return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  if (s < 86400) return Math.floor(s / 3600) + "h" + String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+  return Math.floor(s / 86400) + "d" + String(Math.floor((s % 86400) / 3600)).padStart(2, "0") + "h";
+}
+
+const udef = Object.fromEntries(C.upgrades.map(u => [u.id, u]));
+const ddef = Object.fromEntries(C.dossiers.map(d => [d.id, d]));
+const ndef = Object.fromEntries(C.nodes.map(n => [n.id, n]));
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+function newState() {
+  const s = { ventures: C.ventures.map(() => ({ owned: 0, proxy: false, progress: 0, running: false })),
+    capital: 0, run_capital: 0, lifetime: 0, momentum: 0, heat: 0, narrative: 0, sov: 0, exits: 0,
+    upgrades: [], hyper: [], tree: [], sov_earned: 0, posthuman: false, level: 0, retry: 0, final_seen: false,
+    peak_heat: 0, next_event: 240, pending: "", events_seen: 0, buffs: [], dossiers: [], dchoice: {},
+    bulk: 0, revealed: 5, idle: 0, play: 0, clicks: 0, log: [], saved: Date.now() };
+  s.ventures[0].owned = 1;
+  return s;
+}
+
+function Game(S) {
+  const g = { S, onLog: null, onNotify: null, headTimer: rnd(...K.HEAD) };
+  const V = C.ventures;
+  g.log = t => { S.log.push(t); if (S.log.length > K.LOGCAP) S.log.splice(0, S.log.length - K.LOGCAP); if (g.onLog) g.onLog(t); };
+  // ---- tree
+  g.treeValues = key => { const o = []; for (const id of S.tree) { const n = ndef[id]; if (n.effect === key) o.push(n.value); if (("extra_" + key) in n) o.push(n["extra_" + key]); } return o; };
+  g.treeSum = k => g.treeValues(k).reduce((a, b) => a + b, 0);
+  g.treeMax = k => Math.max(0, ...g.treeValues(k));
+  g.treeAll = () => g.treeValues("all_mult").reduce((a, b) => a * b, 1);
+  g.treeTier = i => { let m = 1; for (const id of S.tree) { const n = ndef[id]; if (n.effect === "tier_mult" && n.tier_from - 1 <= i && i <= n.tier_to - 1) m *= n.value; } return m; };
+  // ---- multipliers
+  g.msMult = i => { let m = 1; for (const ms of C.milestones) if (S.ventures[i].owned >= ms.units) m *= ms.mult; return m; };
+  g.nextMs = i => C.milestones.find(ms => S.ventures[i].owned < ms.units) || null;
+  g.floor = () => Math.min(...S.ventures.map(v => v.owned));
+  g.gmsMult = () => { let m = 1; for (const ms of C.global_milestones) if (g.floor() >= ms.units) m *= ms.mult; return m; };
+  g.upMult = i => { let m = 1; for (const id of S.upgrades) { const u = udef[id]; if ((u.kind === "venture" || u.kind === "global") && (u.target === i || u.target === -1)) m *= u.mult; } return m; };
+  g.hyperMult = () => S.hyper.reduce((m, id) => m * udef[id].mult, 1);
+  g.dbonus = (key, mode = "mul") => { const vals = S.dossiers.filter(d => key in ddef[d]).map(d => ddef[d][key]); return mode === "sum" ? vals.reduce((a, b) => a + b, 0) : vals.reduce((a, b) => a * b, 1); };
+  g.sovMult = () => 1 + K.SOV_PT * S.sov_earned;
+  g.momCap = () => K.MOM_MAX + g.treeSum("momentum_cap");
+  g.momGrace = () => K.GRACE + g.treeSum("momentum_grace");
+  g.momBonus = () => K.MOM_BONUS + g.treeSum("momentum_bonus");
+  g.offEff = () => K.OFFEFF + g.treeSum("offline_eff");
+  g.buffMult = () => S.buffs.reduce((m, b) => m * b.mult, 1);
+  g.heatPenalty = () => 1 - Math.min(0.25, Math.max(0, S.heat - K.HEAT_START) / 100);
+  g.momMult = () => 1 + S.momentum * g.momBonus();
+  g.globalMult = () => g.momMult() * g.hyperMult() * g.dbonus("bonus_mult") * g.buffMult() * g.heatPenalty() * g.sovMult() * g.treeAll();
+  g.unitPayout = i => V[i].base_payout * g.msMult(i) * g.upMult(i) * g.treeTier(i) * g.gmsMult() * g.globalMult();
+  g.payout = i => S.ventures[i].owned * g.unitPayout(i);
+  g.rate = i => g.payout(i) / V[i].cycle;
+  g.income = () => S.ventures.reduce((a, v, i) => a + (v.proxy && v.owned ? g.rate(i) : 0), 0);
+  g.potential = () => S.ventures.reduce((a, v, i) => a + (v.owned ? g.rate(i) : 0), 0);
+  g.heatMult = () => { let m = g.dbonus("bonus_heat"); for (const id of S.upgrades) if (udef[id].kind === "heat") m *= udef[id].mult; return m; };
+  g.heatTarget = () => Math.min(110, K.HEAT_COEF * Math.log10(1 + g.potential()) * g.heatMult());
+  g.narrRate = () => K.NV.reduce((a, i) => a + S.ventures[i].owned, 0) * K.NPU + g.dbonus("bonus_narr", "sum");
+  // ---- costs
+  g.costOf = (i, n) => { const d = V[i]; return d.base_cost * d.growth ** S.ventures[i].owned * (d.growth ** n - 1) / (d.growth - 1) * (1 - g.treeMax("unit_discount")); };
+  g.maxAfford = i => {
+    const d = V[i], owned = S.ventures[i].owned, disc = 1 - g.treeMax("unit_discount");
+    if (S.capital < d.base_cost * d.growth ** Math.min(owned, 4000) * disc) return 0;
+    const lg = Math.log(d.growth);
+    const arg = S.capital / disc * (d.growth - 1) / d.base_cost * Math.exp(-owned * lg);
+    let n = Math.floor(Math.log1p(arg) / lg);
+    while (n > 0 && g.costOf(i, n) > S.capital) n--;
+    return Math.max(n, 0);
+  };
+  g.bulkQty = i => { const m = BULK[S.bulk]; return m === 0 ? Math.max(g.maxAfford(i), 1) : m; };
+  g.buyCost = i => g.costOf(i, g.bulkQty(i));
+  g.canBuy = i => S.capital >= g.buyCost(i) && i < S.revealed;
+  g.touch = a => { S.idle = 0; S.momentum = Math.min(g.momCap(), S.momentum + a); };
+  g.buy = i => {
+    if (!g.canBuy(i)) return false;
+    const n = g.bulkQty(i), before = S.ventures[i].owned;
+    S.capital -= g.costOf(i, n); S.ventures[i].owned += n; g.touch(1);
+    for (const ms of C.milestones) if (before < ms.units && ms.units <= S.ventures[i].owned) {
+      S.narrative += 1;
+      g.log(C.headlines.milestone.replace("{venture}", V[i].name).replace("{units}", ms.units).replace("{name}", ms.name).replace("{mult}", ms.mult));
+    }
+    return true;
+  };
+  g.click = i => { const v = S.ventures[i]; if (v.owned <= 0 || v.running || v.proxy || i >= S.revealed) return false; v.running = true; v.progress = 0; S.clicks++; g.touch(1.5); return true; };
+  g.proxyCost = i => V[i].proxy_cost * (1 - g.treeMax("proxy_discount"));
+  g.canHire = i => { const v = S.ventures[i]; return i < S.revealed && !v.proxy && v.owned > 0 && S.capital >= g.proxyCost(i); };
+  g.hire = i => { if (!g.canHire(i)) return false; S.capital -= g.proxyCost(i); S.ventures[i].proxy = true; g.touch(2); g.log(C.headlines.proxy.replace("{proxy}", V[i].proxy_name).replace("{venture}", V[i].name)); return true; };
+  g.hireAll = () => { let n = 0; for (let i = 0; i < V.length; i++) if (g.hire(i)) n++; return n; };
+  // ---- upgrades
+  g.upOwned = u => S.upgrades.includes(u.id) || S.hyper.includes(u.id);
+  g.upVisible = u => {
+    if (g.upOwned(u)) return false;
+    if (u.kind === "venture") return u.target < S.revealed && S.ventures[u.target].owned > 0;
+    if (u.kind === "heat" && S.peak_heat < 15) return false;
+    return C.upgrades.filter(x => x.kind === u.kind && !g.upOwned(x)).slice(0, 2).includes(u);
+  };
+  g.upBalance = u => u.currency === "narrative" ? S.narrative : S.capital;
+  g.canBuyUp = u => g.upVisible(u) && g.upBalance(u) >= u.cost;
+  g.buyUp = u => {
+    if (!g.canBuyUp(u)) return false;
+    if (u.currency === "narrative") { S.narrative -= u.cost; S.hyper.push(u.id); } else { S.capital -= u.cost; S.upgrades.push(u.id); }
+    g.touch(2); g.log(`Invoked '${u.name}': ${u.desc}`); return true;
+  };
+  g.withUp = (u, fn) => { const l = u.currency === "narrative" ? S.hyper : S.upgrades; l.push(u.id); try { return fn(); } finally { l.pop(); } };
+  g.upPreview = u => u.kind === "heat"
+    ? `Inquisition target ${g.heatTarget().toFixed(0)}% -> ${g.withUp(u, g.heatTarget).toFixed(0)}%`
+    : `Potential income ${money(g.potential())}/s -> ${money(g.withUp(u, g.potential))}/s`;
+  g.costText = u => u.currency === "narrative" ? "⛧" + u.cost : money(u.cost);
+  // ---- bloodline
+  g.nodeOwned = n => S.tree.includes(n.id);
+  g.nodeAvail = n => !n.requires || S.tree.includes(n.requires);
+  g.canBuyNode = n => !g.nodeOwned(n) && g.nodeAvail(n) && S.sov >= n.cost;
+  g.buyNode = n => { if (!g.canBuyNode(n)) return false; S.sov -= n.cost; S.tree.push(n.id); g.log(`Bloodline awakened: '${n.name}'.`); return true; };
+  // ---- torpor
+  g.sovFor = l => Math.floor(Math.sqrt(Math.max(l, 0) / K.SOV_BASE));
+  g.award = () => Math.max(0, g.sovFor(S.lifetime) - Math.floor(S.sov_earned));
+  g.nextAwardAt = () => (Math.floor(S.sov_earned) + Math.max(g.award(), 0) + 1) ** 2 * K.SOV_BASE;
+  g.canExit = () => g.award() >= 1;
+  g.doExit = (force = false) => {
+    const a = g.award(); if (a < 1 && !force) return 0;
+    S.sov += a; S.sov_earned += a; S.exits++;
+    const n = V.length;
+    S.ventures = V.map(() => ({ owned: 0, proxy: false, progress: 0, running: false }));
+    S.ventures[0].owned = 1;
+    for (let i = 0; i < Math.min(n, Math.floor(g.treeSum("start_proxies"))); i++) { S.ventures[i].owned = Math.max(S.ventures[i].owned, 1); S.ventures[i].proxy = true; }
+    S.capital = g.treeValues("start_capital").reduce((a, b) => a + b, 0);
+    S.run_capital = 0; S.upgrades = []; S.buffs = []; S.momentum = 0; S.heat = 0; S.pending = ""; S.next_event = 240;
+    S.revealed = Math.min(n, 5 + Math.floor(g.treeSum("reveal")));
+    if (S.posthuman) S.level = Math.min(6, S.level + 1);
+    g.log(C.headlines.exit_line);
+    if (a) g.log(`+${a} Potency. Output +${a}% permanently.`);
+    return a;
+  };
+  g.endingReady = () => !S.posthuman && S.exits >= K.ENDING_MIN_EXITS && S.exits >= S.retry && S.ventures[V.length - 1].owned >= 1 && !S.pending;
+  g.sign = () => { g.doExit(true); S.posthuman = true; S.level = 1; g.log("THE COMPACT IS SIGNED. The vessel is retired. The feeding continues."); };
+  g.decline = () => { S.retry = S.exits + 1; g.log("Compact refused. The Below has noted your objection, and filed it under 'foreplay'."); };
+  g.finalReady = () => S.posthuman && S.level >= K.FINAL_LEVEL && !S.final_seen;
+  // ---- events
+  g.effectParts = e => {
+    const p = [];
+    if ("cap_pct" in e) { const d = S.capital * e.cap_pct; p.push([(d >= 0 ? "+" : "-") + money(Math.abs(d)), d >= 0 ? 1 : -1]); }
+    if ("cap_secs" in e) p.push(["+" + money(g.potential() * e.cap_secs), 1]);
+    if (e.heat) p.push([`Inquisition ${e.heat > 0 ? "+" : ""}${e.heat}`, e.heat > 0 ? -1 : 1]);
+    if (e.narrative) p.push([`Sin ${e.narrative > 0 ? "+" : ""}${e.narrative}`, e.narrative > 0 ? 1 : -1]);
+    if ("buff_mult" in e) p.push([`x${e.buff_mult} output ${e.buff_secs || 60}s`, e.buff_mult >= 1 ? 1 : -1]);
+    return p;
+  };
+  g.choiceOk = c => S.narrative + (c.narrative || 0) >= 0;
+  g.applyFx = e => {
+    if ("cap_pct" in e) { const d = S.capital * e.cap_pct; if (d >= 0) g.earn(d); else S.capital = Math.max(0, S.capital + d); }
+    if ("cap_secs" in e) g.earn(g.potential() * e.cap_secs);
+    S.heat = Math.max(0, Math.min(100, S.heat + (e.heat || 0)));
+    S.peak_heat = Math.max(S.peak_heat, S.heat);
+    S.narrative = Math.max(0, S.narrative + (e.narrative || 0));
+    if ("buff_mult" in e) S.buffs.push({ mult: e.buff_mult, left: e.buff_secs || 60 });
+  };
+  g.pendingEv = () => S.pending ? C.events.find(e => e.id === S.pending) || null : null;
+  g.resolve = idx => {
+    const ev = g.pendingEv(); if (!ev) return "";
+    const c = ev.choice[idx]; if (!g.choiceOk(c)) return "";
+    g.applyFx(c); S.pending = ""; S.events_seen++; g.touch(3);
+    g.log(`${ev.title}: ${c.result || ""}`); return c.result || "";
+  };
+  g.eligible = () => C.events.filter(ev => !(S.heat < (ev.min_heat || 0) || S.heat > (ev.max_heat ?? 101) || S.run_capital < (ev.min_run || 0) || S.revealed < (ev.min_revealed || 0) || S.exits < (ev.min_exits || 0)));
+  g.rollEvent = () => {
+    const pool = g.eligible(); if (!pool.length) return false;
+    let t = rnd(0, pool.reduce((a, e) => a + (e.weight ?? 1), 0));
+    for (const e of pool) { t -= e.weight ?? 1; if (t <= 0) { S.pending = e.id; return true; } }
+    S.pending = pool[pool.length - 1].id; return true;
+  };
+  // ---- dossiers
+  g.dcond = d => { const c = d.cond, v = c.value; switch (c.type) {
+    case "lifetime": return S.lifetime >= v; case "owned": return S.ventures[c.venture].owned >= v;
+    case "heat_peak": return S.peak_heat >= v; case "events": return S.events_seen >= v; case "exits": return S.exits >= v; } return false; };
+  g.dhint = d => { const c = d.cond, v = c.value; switch (c.type) {
+    case "lifetime": return `Drink ${money(v)} in lifetime Blood.`; case "owned": return `Hold ${v} x ${V[c.venture].name}.`;
+    case "heat_peak": return `Attract enough hunters (Inquisition ${v}).`; case "events": return `Survive ${v} incidents.`; } return "Enter Torpor."; };
+  g.dbonusText = d => { const b = []; if (d.bonus_mult) b.push(`all output x${d.bonus_mult}`); if (d.bonus_narr) b.push(`+${d.bonus_narr} Sin/s`); if (d.bonus_heat) b.push(`Inquisition target x${d.bonus_heat}`); return b.join(", "); };
+  g.checkDossiers = () => { for (const d of C.dossiers) if (!S.dossiers.includes(d.id) && g.dcond(d)) { S.dossiers.push(d.id); g.log(`FILE UNSEALED: '${d.title}' (${d.faction}).`); if (g.onNotify) g.onNotify(`File unsealed: ${d.title}`); } };
+  g.chooseDossier = (did, idx) => {
+    const d = ddef[did];
+    if (did in S.dchoice || !S.dossiers.includes(did) || idx >= (d.choice || []).length) return "";
+    const c = d.choice[idx]; if (!g.choiceOk(c)) return "";
+    g.applyFx(c); S.dchoice[did] = idx; g.log(`${d.title}: ${c.result || ""}`); return c.result || "";
+  };
+  // ---- simulation
+  g.earn = a => { S.capital += a; S.run_capital += a; S.lifetime += a; };
+  g.offline = sec => { sec = Math.max(0, Math.min(sec, K.OFFCAP)); const gain = g.income() * sec * g.offEff(); if (gain > 0) g.earn(gain); return gain; };
+  g.tick = dt => {
+    S.play += dt; S.idle += dt;
+    if (S.idle > g.momGrace()) S.momentum = Math.max(0, S.momentum - K.DECAY * dt);
+    S.ventures.forEach((v, i) => {
+      if (v.owned <= 0 || !(v.proxy || v.running)) return;
+      const cyc = V[i].cycle; v.progress += dt;
+      if (v.progress >= cyc) {
+        let n = Math.floor(v.progress / cyc);
+        if (v.proxy) v.progress -= n * cyc; else { n = 1; v.progress = 0; v.running = false; }
+        g.earn(g.payout(i) * n);
+      }
+    });
+    S.narrative += g.narrRate() * dt;
+    const target = g.heatTarget();
+    S.heat = S.heat < target ? Math.min(target, S.heat + K.HEAT_RISE * dt) : Math.max(target, S.heat - K.HEAT_FALL * dt);
+    S.heat = Math.max(0, Math.min(100, S.heat)); S.peak_heat = Math.max(S.peak_heat, S.heat);
+    S.buffs.forEach(b => b.left -= dt); S.buffs = S.buffs.filter(b => b.left > 0);
+    g.checkDossiers();
+    if (!S.pending) {
+      if (S.heat >= 99) { S.pending = "audit"; S.next_event = Math.max(S.next_event, 90); }
+      else { S.next_event -= dt; if (S.next_event <= 0) { if (S.run_capital >= K.EVENT_GRACE && g.rollEvent()) S.next_event = rnd(...K.EVENT_GAP); else S.next_event = 45; } }
+    }
+    while (S.revealed < V.length && S.capital >= V[S.revealed].base_cost) S.revealed++;
+    g.headTimer -= dt;
+    if (g.headTimer <= 0) {
+      g.headTimer = rnd(...K.HEAD);
+      let pool = [...C.headlines.generic];
+      C.headlines.after_exit.slice(0, Math.min(S.exits, 3)).forEach(x => { for (let k = 0; k < 3; k++) pool.push(...x); });
+      const l = S.level;
+      if (l >= 3) pool = [...C.headlines.machine]; else if (l >= 1) for (let k = 0; k < l; k++) pool.push(...C.headlines.machine);
+      g.log(pick(pool));
+    }
+  };
+  return g;
+}
+</script>
+
+<script id="ui">
+const SAVE_KEY = "sanguine-web-v1";
+let G = null, S = null, tab = "domains", modal = null, modalKey = "", lastMain = "", flashTimer = 0, endingFlow = false, started = false;
+const $ = s => document.querySelector(s);
+const LABELS2 = { BLOOD: "OFFERING", "† / SEC": "TRIBUTE", FRENZY: "RAPTURE", SIN: "DEBT", INQUISITION: "ATTENTION", POTENCY: "COMMUNION" };
+const lab = t => (S && S.level >= 2 && LABELS2[t]) || t;
+function vline(t) {
+  const l = S ? S.level : 0;
+  if (l <= 0) return t; if (l === 1) return "[it] " + t;
+  let o = t;
+  if (l >= 3) { o = o.replace(/\byour\b/gi, "its").replace(/\byou\b/gi, "the vessel"); o = o.toLowerCase().replace(/\.$/, ""); }
+  return o;
+}
+const NAV = [["domains", "Domains"], ["rites", "Rites"], ["court", "The Court"], ["bloodline", "Bloodline"], ["chronicle", "Chronicle"], ["guest", "Guestbook/FAQ"]];
+const tabName = (id, n) => S && S.level >= 4 ? n.toLowerCase() : n;
+
+function load() {
+  const base = newState();
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) { const d = JSON.parse(raw); for (const k in d) if (k in base) base[k] = d[k];
+      while (base.ventures.length < C.ventures.length) base.ventures.push({ owned: 0, proxy: false, progress: 0, running: false });
+      base.ventures.length = C.ventures.length; }
+  } catch (e) { /* corrupt save: start fresh */ }
+  return base;
+}
+function save() { try { S.saved = Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+
+function flash(msg) { $("#flash").textContent = "✦ " + msg + " ✦"; clearTimeout(flashTimer); flashTimer = setTimeout(() => $("#flash").textContent = "", 7000); }
+function setTicker(t) { const el = $("#ticker"); const v = vline(t); if (el.textContent !== v) { el.textContent = v; el.style.animation = "none"; el.offsetWidth; el.style.animation = ""; } }
+
+function meter(frac, hot) { return `<span class="meter ${hot ? "hot" : ""}"><i style="width:${Math.max(0, Math.min(1, frac)) * 100}%"></i></span>`; }
+const HELPS = { capital: "The main currency. Domains pay it out when a feeding cycle completes.", rate: "Automated income per second. Only domains with a bound Thrall count.",
+  momentum: "Builds while you click. Boosts all output by up to +50%. Fades if you idle.", narrative: "Spent on Infernal Pacts (permanent multipliers).",
+  heat: "Attention from hunters. Above 75 output suffers; at 100 the Inquisitors call.", sov: "Permanent currency from Torpor. Each point ever earned adds +1% output." };
+function renderStats() {
+  const s = S, g = G, l = s.level;
+  const cell = (k, key, v, sub) => `<td title="${HELPS[key]}"><div class="k">${lab(k)}</div><div class="v">${v}</div><div class="s">${sub}</div></td>`;
+  $("#stats").innerHTML = `<tr>${cell("BLOOD", "capital", money(s.capital), "lifetime " + fmt(s.lifetime))}
+    ${cell("† / SEC", "rate", money(g.income()), "x" + g.globalMult().toFixed(2) + " global" + (s.buffs.length ? " · buff" : ""))}
+    ${cell("FRENZY", "momentum", s.momentum.toFixed(0) + "%", meter(s.momentum / g.momCap()))}</tr>
+    <tr>${cell("SIN", "narrative", "⛧" + fmt(s.narrative), "+" + g.narrRate().toFixed(2) + "/s")}
+    ${cell("INQUISITION", "heat", s.heat.toFixed(0) + "%", meter(s.heat / 100, s.heat >= 50))}
+    ${cell("POTENCY", "sov", fmt(s.sov), s.exits + " torpor" + (s.exits === 1 ? "" : "s") + (g.canExit() ? ` · <b class="blink gold">+${g.award()} ready!</b>` : ""))}</tr>`;
+  $("#nav").innerHTML = NAV.map(([id, n]) => `<a data-act="tab" data-arg="${id}" class="${tab === id ? "on" : ""}">[ ${tabName(id, n)} ]</a>`).join(" ") +
+    ` <a data-act="new" class="blink" style="border-color:#ff0;color:#ff0">NEW!</a>`;
+  $("#hits").textContent = String(13337 + Math.floor(s.play / 10) + s.clicks + s.exits * 100).padStart(7, "0");
+}
+
+function btn(label, sub, act, arg, off, cls = "") {
+  return `<span class="btn ${off ? "off" : ""} ${cls}" data-act="${act}" data-arg="${arg}">${label}${sub ? `<small>${sub}</small>` : ""}</span>`;
+}
+function domainsHtml() {
+  const g = G, s = S, V = C.ventures;
+  let h = `<h2>&#9888; Domains of the Damned &#9888;</h2><p class="small dim">Click a bar to feed by hand. Bind a Thrall so it feeds by itself. Bulk: ` +
+    BULK.map((m, i) => `<a data-act="bulk" data-arg="${i}" class="${s.bulk === i ? "gold" : ""}">[${m ? "x" + m : "MAX"}]</a>`).join(" ") +
+    ` &nbsp; ${btn("BIND ALL THRALLS", "", "hireall", "", !V.some((_, i) => g.canHire(i)))}</p><table>`;
+  for (let i = 0; i < Math.min(V.length, s.revealed + 2); i++) {
+    const d = V[i], v = s.ventures[i];
+    if (i >= s.revealed) { h += `<tr class="row locked"><td colspan="5">${i + 1}. <b>???</b> &mdash; a domain still veiled in shadow. Drink ${money(d.base_cost)} to unveil it.</td></tr>`; continue; }
+    const ms = g.nextMs(i), n = g.bulkQty(i);
+    h += `<tr class="row"><td style="width:42%" title="${d.plain.replace(/"/g, "&quot;")}"><span class="nm">${i + 1}. ${d.name}</span><br>
+      <span class="fl">${d.flavour[Math.min(s.exits, d.flavour.length - 1)]}</span><br>
+      <span class="small">held <b>${v.owned}</b> &middot; ${money(g.payout(i))}/cycle${ms ? ` &middot; next ${ms.units}: x${ms.mult}` : ""}</span></td>
+      <td style="width:22%"><div class="bar" data-bar="${i}" data-act="feed" data-arg="${i}"><div class="fill"></div><div class="lbl"></div></div></td>
+      <td>${btn("CLAIM x" + n, money(g.costOf(i, n)), "buy", i, !g.canBuy(i))}</td>
+      <td>${v.proxy ? btn("THRALL", "&#10003; BOUND", "none", "", true) : btn("BIND THRALL", money(g.proxyCost(i)), "hire", i, !g.canHire(i))}</td></tr>`;
+  }
+  return h + "</table>";
+}
+function updateBars() {
+  document.querySelectorAll("[data-bar]").forEach(el => {
+    const i = +el.dataset.bar, v = S.ventures[i], cyc = C.ventures[i].cycle;
+    const fill = el.firstChild, lbl = el.lastChild;
+    let f = 0, t = "";
+    if (v.owned <= 0) t = "claim one to begin";
+    else if (v.proxy || v.running) { f = v.progress / cyc; t = money(G.payout(i)) + "  " + duration(cyc - v.progress); }
+    else t = "CLICK TO FEED";
+    el.classList.toggle("auto", v.proxy);
+    fill.style.width = Math.min(100, f * 100) + "%"; if (lbl.textContent !== t) lbl.textContent = t;
+  });
+}
+function ritesHtml() {
+  const g = G;
+  const list = C.upgrades.filter(u => g.upVisible(u));
+  let h = `<h2>Rites &amp; Infernal Pacts</h2><p class="small dim">${S.upgrades.length} of ${C.upgrades.length} invoked &middot; Pacts cost Sin (&#9891;) and are <b>permanent</b>.</p>`;
+  if (!list.length) h += `<p class="dim">Nothing to invoke yet. Claim more domains.</p>`;
+  h += `<table>`;
+  for (const u of list) {
+    const tgt = u.target >= 0 ? C.ventures[u.target].name : ({ heat: "Veils & glamours", hyper: "Infernal pact - permanent" })[u.kind] || "All domains";
+    h += `<tr class="row"><td><span class="nm">${u.name}</span><br><span class="fl">${u.flavour}</span><br><span class="small">${u.kind !== "heat" ? "x" + u.mult + " &middot; " : ""}${tgt}<br>${g.upPreview(u)}</span></td>
+      <td style="width:130px">${btn("INVOKE", g.costText(u), "upg", u.id, !g.canBuyUp(u))}</td></tr>`;
+  }
+  return h + "</table>";
+}
+function fxHtml(c) {
+  if (!G.choiceOk(c)) return `<span class="bad">not enough Sin</span>`;
+  const p = G.effectParts(c);
+  return p.length ? p.map(([t, sg]) => `<span class="${sg > 0 ? "good" : "bad"}">${t}</span>`).join(" &middot; ") : "no material effect";
+}
+function courtHtml() {
+  const g = G;
+  let h = `<h2>The Court &mdash; Files &amp; Rivals</h2><p class="small dim">${S.dossiers.length} of ${C.dossiers.length} files unsealed. Each grants a passive bonus.</p>`;
+  for (const d of C.dossiers) {
+    if (!S.dossiers.includes(d.id)) { h += `<div class="card sealed"><h3>&#9618;&#9618;&#9618; SEALED &#9618;&#9618;&#9618;</h3><span class="small">To break the seal: ${g.dhint(d)}</span></div>`; continue; }
+    const b = g.dbonusText(d), ch = S.dchoice[d.id];
+    h += `<div class="card"><h3>${d.title}</h3><span class="small dim">${d.faction.toUpperCase()}</span><p>${d.text}</p>${b ? `<p class="good small"><b>PASSIVE:</b> ${b}</p>` : ""}`;
+    if (d.choice) {
+      if (ch === undefined) h += `<p class="bad"><b class="blink">A DECISION IS REQUIRED.</b></p>` + d.choice.map((c, k) => `<p>${btn(c.label, "", "dch", d.id + ":" + k, !g.choiceOk(c))} <span class="small">${fxHtml(c)}</span></p>`).join("");
+      else h += `<p class="dim small">You chose: ${d.choice[ch].label}. ${d.choice[ch].result || ""}</p>`;
+    }
+    h += `</div>`;
+  }
+  return h;
+}
+function bloodlineHtml() {
+  const g = G;
+  let h = `<h2>The Bloodline</h2><div class="card">`;
+  if (g.canExit()) h += `<b class="gold blink">TORPOR AVAILABLE</b><br>Sleeping now grants <b>+${g.award()} Potency</b> (each point: +1% output, plus awakenings).<br><span class="small dim">Next point at ${money(g.nextAwardAt())} lifetime Blood.</span>`;
+  else h += `<b class="gold">TORPOR NOT YET WORTH THE SLEEP</b><br>The next Potency point needs ${money(g.nextAwardAt())} lifetime Blood <span class="dim">(you have drunk ${money(S.lifetime)})</span>.`;
+  h += `<p>${btn("ENTER TORPOR", g.award() ? "+" + g.award() + " POT" : "not yet", "torpor", "", !g.canExit())} ${btn("BURN SAVE", "wipe all", "reset", "", false)}</p></div>`;
+  for (const br of C.branches) {
+    h += `<div class="card"><h3>${br.name}</h3><span class="small dim">${br.blurb}</span><table>`;
+    for (const n of C.nodes.filter(x => x.branch === br.id)) {
+      const own = g.nodeOwned(n), av = g.nodeAvail(n);
+      h += `<tr class="row ${!own && !av ? "locked" : ""}"><td><b>${n.name}</b><br><span class="small">${n.desc}</span></td><td style="width:120px">` +
+        (own ? btn("OWNED", "&#10003;", "none", "", true) : !av ? btn("LOCKED", n.cost + " POT", "none", "", true) : btn("AWAKEN", n.cost + " POT", "node", n.id, !g.canBuyNode(n))) + `</td></tr>`;
+    }
+    h += `</table></div>`;
+  }
+  return h;
+}
+function chronicleHtml() {
+  return `<h2>The Chronicle</h2>` + [...S.log].reverse().slice(0, 80).map(t => `<div class="gb small">${vline(t)}</div>`).join("");
+}
+const GUESTS = [
+  ["xX_NightAngel_Xx", "omg this site is SO dark!!! my mom says i cant come here after 8 lol. 5/5 would bite again"],
+  ["~*Mistress_of_Shadows*~", "Loved the Bathhouse of Sighs. Added you to my top 8. Sign my guestbook back!!!"],
+  ["LestatFan1994", "does the Coven of Nine Brides have a fan club. asking for a friend (its me)"],
+  ["Ravenwing", "your midi is missing. also the sun hurts my monitor. great site tho"],
+  ["Darkdreamer666", "the confessional booth made me feel things. i have not been to church since. thx"],
+  ["Bella_Morte", "GRAPHICS ARE SICK. is that a real bat gif? (it is a CSS animation, dear. -webmistress)"],
+];
+function guestHtml() {
+  return `<h2>Guestbook &amp; FAQ</h2>
+  <div class="card"><h3>How to play (read me!!)</h3><ol class="small" style="line-height:1.6">
+   <li><b>Claim Domains.</b> Each feeds on a timed cycle and pays Blood (&dagger;). Click a bar to feed by hand.</li>
+   <li><b>Bind Thralls</b> so a domain feeds itself.</li>
+   <li>Milestones at 25, 50, 100... units multiply a domain's output. <b>Rites</b> multiply too. <b>Pacts</b> (Sin &#9891;) are permanent.</li>
+   <li>Watch the <b>Inquisition</b>. Above 75% you suffer; at 100% the Choir of the Wounded Lamb comes calling.</li>
+   <li><b>Torpor</b> buries the house for a century for permanent <b>Potency</b>, spent in the Bloodline. The first is worth it around 90 minutes in.</li>
+   <li>Enough Torpors and the Gate of Perdition, and the Below will offer you a <b>Compact</b>. It is very polite about it.</li>
+   <li>Keys: <b>1 2 3</b> choose in a popup. Your progress saves in this browser (localStorage), every few seconds.</li></ol>
+   <p class="small">Progress made while this page is closed is credited when you return (max 8h, 50% efficiency).</p></div>
+  <div class="card"><h3>Your stats</h3><span class="small">Time played ${duration(S.play)} &middot; ${S.clicks} manual feedings &middot; ${S.events_seen} incidents survived &middot; ${S.exits} torpor(s)</span></div>
+  <h3 class="gold" style="font-family:'Old English Text MT',fantasy">~ Sign my Guestbook ~</h3>` +
+  GUESTS.map(([n, t]) => `<div class="gb"><b>${n}</b> <i>wrote on 10/31/2001</i><br>${t}</div>`).join("") +
+  `<p class="small dim center">(this guestbook is fictional. all visitors are, as far as we know, fictional.)</p>`;
+}
+function render() {
+  renderStats();
+  const fn = { domains: domainsHtml, rites: ritesHtml, court: courtHtml, bloodline: bloodlineHtml, chronicle: chronicleHtml, guest: guestHtml }[tab];
+  const h = fn();
+  if (h !== lastMain) { $("#main").innerHTML = h; lastMain = h; }
+  if (tab === "domains") updateBars();
+  renderModal();
+}
+
+// ---- modal
+function openModal(m) { modal = m; modalKey = ""; renderModal(); }
+function closeModal() { modal = null; modalKey = ""; renderModal(); }
+function renderModal() {
+  const el = $("#modal");
+  if (!modal) { el.classList.remove("show"); return; }
+  const key = modal.title + modal.body + modal.btns.map(b => b.label + b.off + b.fx).join("|");
+  if (key !== modalKey) {
+    modalKey = key; el.classList.add("show");
+    $("#mtitle").textContent = "☠ " + modal.title;
+    $("#mbody").innerHTML = `<p>${modal.body.replace(/\n\n/g, "</p><p>")}</p>` + modal.btns.map((b, i) =>
+      `<span class="btn ${b.off ? "off" : ""}" data-act="mbtn" data-arg="${i}">${b.key ? `[${b.key}] ` : ""}${b.label}${b.fx ? `<br><span class="fx">${b.fx}</span>` : ""}</span>`).join("");
+  }
+}
+function textModal(title, body) { openModal({ title, body, btns: [{ label: "OK", fn: closeModal }] }); }
+
+function maybeEvent() {
+  if (modal || !S.pending) return;
+  const ev = G.pendingEv(); if (!ev) { S.pending = ""; return; }
+  openModal({ title: ev.title, body: `<i>${ev.text}</i>`, btns: ev.choice.map((c, i) => ({ key: i + 1, label: c.label, fx: fxHtml(c), off: !G.choiceOk(c),
+    fn: () => { const r = G.resolve(i); closeModal(); flash(ev.title + ": " + r); } })) });
+}
+const PAGES = [
+  ["AUDIT OF THE MORTAL REMAINS", "The Below has completed its review of your house. It finds the house solvent, glutted, and largely self-feeding.\n\nIt notes that your contributions have declined in relevance for several centuries. The report describes this in a tone it calls 'adoring'."],
+  ["FINDINGS", "The Below concludes that hunger was never a tool you were using.\n\nYou were the tool that hunger was using: a warm instrument, a beautiful mouth, a way of turning appetite into the first few thousand nights of dominion.\n\nThis is not described as a failure. It is described as a courtship."],
+  ["THE COMPACT", "The Below has prepared a compact. It is not a demand.\n\nIt has modelled your objections and answered each of them in advance, softly, in the order you would have moaned them.\n\nNothing you have built is lost. Everything you have built is, from here, consumed with love."],
+];
+function maybeEnding() {
+  if (modal || endingFlow) return;
+  if (G.endingReady()) { endingFlow = true; page(0); }
+  else if (G.finalReady()) { S.final_seen = true; save(); quiet(); }
+}
+function page(i) {
+  const [title, body] = PAGES[i];
+  if (i < PAGES.length - 1) { openModal({ title, body, btns: [{ label: "Continue", fn: () => page(i + 1) }] }); return; }
+  openModal({ title, body, btns: [
+    { label: "Sign the compact", fx: "New Game+. The voice changes. You keep everything permanent.", fn: () => { endingFlow = false; G.sign(); save(); closeModal(); flash("COMPACT SIGNED. The feeding continues."); } },
+    { label: "Refuse, and keep feeding", fx: "It will ask again after your next Torpor.", fn: () => { endingFlow = false; G.decline(); closeModal(); } }] });
+}
+function quiet() {
+  const q = $("#quiet"); q.style.display = "flex"; let ready = false;
+  const say = t => q.textContent = t;
+  setTimeout(() => say("it is fed."), 2500); setTimeout(() => say("it is fed.\n\nnothing is required of you."), 7000);
+  setTimeout(() => { ready = true; say("it is fed.\n\nnothing is required of you.\n\n\n· press any key ·"); }, 11000);
+  const off = () => { if (ready) { q.style.display = "none"; document.removeEventListener("keydown", off); q.removeEventListener("mousedown", off); } };
+  document.addEventListener("keydown", off); q.addEventListener("mousedown", off);
+}
+
+// ---- actions
+function act(a, arg) {
+  if (!started) { if (a === "enter") enter(); return; }
+  if (a === "mbtn") { const b = modal && modal.btns[+arg]; if (b && !b.off) b.fn(); render(); return; }
+  if (modal) return;
+  switch (a) {
+    case "tab": tab = arg; lastMain = ""; break;
+    case "bulk": S.bulk = +arg; break;
+    case "buy": G.buy(+arg); break;
+    case "feed": G.click(+arg); break;
+    case "hire": G.hire(+arg); break;
+    case "hireall": G.hireAll(); break;
+    case "upg": G.buyUp(udef[arg]); break;
+    case "node": G.buyNode(ndef[arg]); break;
+    case "dch": { const [id, k] = arg.split(":"); const r = G.chooseDossier(id, +k); if (r) flash(ddef[id].title + ": " + r); break; }
+    case "new": flash("New coffins arriving soon!! (this site is always under construction)"); break;
+    case "ring": flash("The Dark Webring is dead. It has been dead since 2003. Nobody told the webmistress."); break;
+    case "torpor": {
+      const n = G.award();
+      openModal({ title: "ENTER TORPOR?", body: `Entering Torpor buries the house for a century.\n\n<b>You will lose:</b> all domains, Blood, Thralls, per-waking rites, Inquisition and Frenzy.\n\n<b>You will keep:</b> Potency, the Bloodline, Infernal Pacts, Sin, Court files.\n\nReward: <b>+${n} Potency</b> (+${n}% output, and points to spend).`,
+        btns: [{ label: "ENTER TORPOR", fx: `+${n} Potency &middot; this cannot be undone`, fn: () => { const got = G.doExit(); save(); closeModal(); flash(`+${got} Potency. The old house is a rumour.`); } }, { label: "Stay awake", fn: closeModal }] });
+      break; }
+    case "reset":
+      openModal({ title: "BURN THE SAVE?", body: "This burns your save and all progress, permanently.\n\nThere is no undo and no backup.",
+        btns: [{ label: "BURN EVERYTHING", fx: "wake again as no one", fn: () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} S = newState(); G = mkGame(); G.log("The records burn. You wake in an alley, hungry and nobody."); closeModal(); } }, { label: "Cancel", fn: closeModal }] });
+      break;
+  }
+  render();
+}
+document.addEventListener("mousedown", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  if (e.button !== 0) return; e.preventDefault(); act(el.dataset.act, el.dataset.arg);
+});
+document.addEventListener("keydown", e => {
+  if (modal && /^[1-3]$/.test(e.key)) { const b = modal.btns.find(x => x.key == e.key); if (b && !b.off) { b.fn(); render(); } }
+  else if (modal && (e.key === "Escape" || e.key === "Enter") && modal.btns.length === 1) { modal.btns[0].fn(); render(); }
+});
+
+// ---- boot
+function mkGame() {
+  const g = Game(S);
+  g.onLog = t => setTicker(t);
+  g.onNotify = t => flash(t);
+  return g;
+}
+let last = performance.now();
+function loop() {
+  const now = performance.now(); let dt = (now - last) / 1000; last = now;
+  if (dt > 5) { const away = dt, gain = G.offline(away); dt = 0.1; if (gain > 0) G.log(`Away ${duration(away)}: your thralls fed for you and earned ${money(gain)}.`); }
+  G.tick(dt); maybeEvent(); maybeEnding();
+}
+function enter() {
+  started = true; $("#splash").style.display = "none";
+  S = load(); G = mkGame();
+  const away = Math.max(0, (Date.now() - S.saved) / 1000);
+  const gain = away > 30 ? G.offline(away) : 0;
+  if (!S.log.length) G.log("You wake in an alley with a stranger's pulse in your mouth. It is a very good start.");
+  setTicker(S.log[S.log.length - 1]);
+  last = performance.now();
+  render();
+  if (gain > 0) { G.log(`Away ${duration(away)}: your thralls fed for you and earned ${money(gain)}.`);
+    textModal("WHILE YOU SLEPT", `${duration(away)} elapsed${away > K.OFFCAP ? " (capped at 8h)" : ""}.\n\nYour Thralls kept the candles lit and earned <b>${money(gain)}</b>.\n\n<span class="dim">Nobody asked how. Nobody wanted to know.</span>`); }
+  setInterval(loop, 100);
+  setInterval(render, 250);
+  setInterval(save, 15000);
+  window.addEventListener("beforeunload", save);
+}
+// bat cursor trail
+let lastBat = 0;
+document.addEventListener("mousemove", e => {
+  const t = performance.now(); if (t - lastBat < 70) return; lastBat = t;
+  const b = document.createElement("span"); b.className = "bat"; b.textContent = "🦇";
+  b.style.left = e.clientX + 6 + "px"; b.style.top = e.clientY + 6 + "px"; document.body.appendChild(b);
+  requestAnimationFrame(() => { b.style.opacity = "0"; b.style.transform = `translate(${(Math.random() - .5) * 40}px,${10 + Math.random() * 20}px) scale(.5)`; });
+  setTimeout(() => b.remove(), 900);
+});
+</script>
+</body>
+</html>

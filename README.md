@@ -56,6 +56,12 @@ feeding while the game is closed (capped at 8h, 50% efficiency, raised by the Bl
 
 Press `?` in-game for the full controls.
 
+## Web version
+
+`web/sanguine.html` is a single self-contained file (no network, no dependencies): the same game as an early-2000s
+geocities goth fansite, with a 18+ splash gate, hit counter, guestbook and bat cursor trail. Open it in any browser;
+progress saves to localStorage. Rebuild it with `python tools/build_html.py` after editing content or `web/template.html`.
+
 ## Development
 
 ```bash
