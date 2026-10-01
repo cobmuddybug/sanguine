@@ -7,6 +7,9 @@ name = "sanguine"
 dynamic = ["version"]
 
 description = "Sanguine - a grimdark terminal idle game of infernal vampires"
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["idle-game", "incremental", "tui", "textual", "vampire"]
 requires-python = ">=3.11"
 dependencies = ["textual>=1.0"]
 

@@ -75,3 +75,7 @@ python tools/shot.py out.png 130 36 corkboard "g.s.lifetime_capital=1e9"   # SVG
 Engine field names (`capital`, `heat`, `narrative`, `sovereignty`, `proxy`, `exit`) are inherited
 from the sibling game; the UI and content rename them (Blood, Inquisition, Sin, Potency, Thrall, Torpor).
 Content lives in `sanguine/content/*.toml`.
+
+## License
+
+MIT, see [LICENSE](LICENSE). Content is fictional and intended for adults.
