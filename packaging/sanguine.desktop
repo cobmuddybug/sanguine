@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Sanguine
+GenericName=Idle Game
+Comment=Feed, seduce and damn your way from an alley kiss to the throne of Hell
+Exec=@LAUNCH@
+Terminal=false
+Categories=Game;
+Keywords=idle;incremental;game;terminal;tui;vampire;grimdark;
+Icon=applications-games
+StartupNotify=false

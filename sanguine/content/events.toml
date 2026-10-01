@@ -1,0 +1,305 @@
+# Nightly incidents. Effects per choice (all optional):
+#   cap_pct   fraction of current Blood gained/lost (-0.1 = lose 10%)
+#   cap_secs  seconds of potential income granted
+#   heat, narrative   flat deltas (heat = Inquisition, narrative = Sin)
+#   buff_mult / buff_secs   temporary global output multiplier
+# Conditions (all optional): min_heat, max_heat, min_run (run blood), min_revealed, min_exits, weight.
+
+[[event]]
+id = "letter_in_blood"
+title = "A LETTER IN BLOOD"
+text = "A love letter arrives, slipped under the door and still damp. It is beautifully written. It is signed with your name, and it describes what you did last Tuesday in tender, incriminating detail."
+weight = 1.0
+  [[event.choice]]
+  label = "Frame it"
+  narrative = 4
+  heat = 8
+  result = "You hung the letter above the bed. Whoever wrote it stopped by that night, to see how it looked."
+  [[event.choice]]
+  label = "Burn it"
+  heat = -5
+  cap_pct = -0.02
+  result = "The ashes were still warm at dawn. Three of your Thralls dreamed of the same mouth."
+  [[event.choice]]
+  label = "Sell the sequel"
+  cap_secs = 300
+  heat = 10
+  result = "A second letter, sold to the highest bidder. The bidder came in person, to check it was genuine."
+
+[[event]]
+id = "audit"
+title = "THE INQUISITORS CALL"
+text = "The Choir of the Wounded Lamb has arrived at your door in white, humming. They would like to inspect the cellar, the chapel, and the bedrooms, in that order, and they would like you to watch."
+min_heat = 30
+weight = 2.0
+  [[event.choice]]
+  label = "Receive them"
+  cap_pct = -0.10
+  heat = -20
+  result = "You poured them wine. They drank it, and confessed things to the walls until sunrise."
+  [[event.choice]]
+  label = "Bar the door"
+  heat = 12
+  narrative = 3
+  result = "You cited an ordinance that hadn't been written. The Choir wrote it down, blushing."
+  [[event.choice]]
+  label = "Convert the chapel to a sanctuary"
+  cap_pct = -0.05
+  heat = -8
+  narrative = -2
+  result = "You are now a house of mercy. The moaning has been reclassified as prayer."
+
+[[event]]
+id = "elders_move"
+title = "THE ELDERS MAKE A MOVE"
+text = "The Gerontocracy of Ash has filed a formal claim on your territory. They are patient, immensely old, and prepared to occupy your nights."
+min_run = 1e6
+weight = 1.0
+  [[event.choice]]
+  label = "Poison the chalice"
+  cap_pct = -0.08
+  heat = 5
+  buff_mult = 1.5
+  buff_secs = 120
+  result = "The wrong elder drank first. The frenzy in your halls that night was unforgettable."
+  [[event.choice]]
+  label = "Buy their loyalty"
+  cap_pct = -0.20
+  narrative = 6
+  result = "You paid in favours, and a few things you'd rather not itemise. They wear your seal now, and blush at it."
+  [[event.choice]]
+  label = "Cede a district"
+  cap_secs = 900
+  heat = 6
+  narrative = -3
+  result = "The district was given away to a house that is also you. Books balanced, and so did the bed."
+
+[[event]]
+id = "penitent"
+title = "A PENITENT AT THE DOOR"
+text = "A young priest has come to your gate in nothing but a stole, carrying every record of the last ten years. He says he wants to be saved. His pulse says he wants something else."
+min_heat = 20
+weight = 1.5
+  [[event.choice]]
+  label = "Take him in"
+  cap_pct = -0.03
+  narrative = 2
+  heat = -4
+  result = "He is Keeper of Your Conscience now. It is a light job. He is doing it kneeling."
+  [[event.choice]]
+  label = "Discredit him"
+  narrative = 4
+  heat = 10
+  result = "The Pale Gazette ran his photograph beside the words 'an unreliable narrator of his own vows'."
+  [[event.choice]]
+  label = "Un-remember him"
+  narrative = 8
+  heat = 15
+  result = "The parish has no record. The parish has no record of the parish."
+
+[[event]]
+id = "sabotage"
+title = "SABOTEURS IN THE CELLAR"
+text = "Someone from the Pale Gazette has been unscrewing the coffin lids by hand, at noon, with a sad little crowbar, hoping to let the sun in."
+min_run = 1e4
+weight = 1.0
+  [[event.choice]]
+  label = "Hire guards"
+  cap_pct = -0.07
+  heat = -3
+  result = "The guards are handsome and discreet. They also drink from the crowbar."
+  [[event.choice]]
+  label = "Retaliate"
+  cap_secs = 400
+  heat = 12
+  result = "Their circulation dropped by exactly the amount they carried. You found it deeply satisfying."
+  [[event.choice]]
+  label = "Sleep through it"
+  buff_mult = 0.75
+  buff_secs = 60
+  heat = -10
+  narrative = 2
+  result = "You wore the ruined lid like a wound. The court read this as a kind of humility, and a rare one."
+
+[[event]]
+id = "veil_endorsement"
+title = "THE VEIL BUREAU OFFERS ITS BLESSING"
+text = "The Conclave of the Veil offers a formal endorsement, conditional on demonstrated discretion. They have a form, and a private room in which to fill it out."
+min_run = 1e5
+weight = 1.0
+  [[event.choice]]
+  label = "Perform discretion"
+  narrative = 5
+  cap_pct = -0.04
+  result = "You lowered your eyes at the appropriate moment. It was logged as a deliverable, and someone sighed."
+  [[event.choice]]
+  label = "Decline, loudly"
+  buff_mult = 1.3
+  buff_secs = 120
+  heat = 4
+  result = "Refusing the Veil is itself a brand. Demand rises, and so do a few pulses."
+  [[event.choice]]
+  label = "Forge the blessing"
+  cap_secs = 500
+  heat = 14
+  narrative = 2
+  result = "The forgery was indistinguishable from the original, which was also a forgery, and slightly perfumed."
+
+[[event]]
+id = "rival_cult"
+title = "THE PERPETUAL THIRST PROPOSES A UNION"
+text = "The Perpetual Thirst proposes a merger of appetites. Their leader is a mouth that has never once been closed."
+min_run = 1e7
+weight = 0.8
+  [[event.choice]]
+  label = "Merge"
+  buff_mult = 1.5
+  buff_secs = 120
+  narrative = -4
+  heat = 4
+  result = "Two hungers became one. Attendance doubled; restraint was averaged, then abolished."
+  [[event.choice]]
+  label = "Ridicule them"
+  narrative = 5
+  heat = 3
+  result = "The mouth has been asked to keep quiet, publicly. It complied, ostentatiously, around something."
+  [[event.choice]]
+  label = "Infiltrate"
+  cap_secs = 300
+  heat = 9
+  narrative = 1
+  result = "You joined at the entry level and were promoted for enthusiasm within the hour."
+
+[[event]]
+id = "vigil_movement"
+title = "A VIGIL BECOMES A MOVEMENT"
+text = "One woman's overnight vigil outside your gate has acquired followers. They kneel in the road, and they moan the same name. Yours."
+min_run = 1e4
+weight = 1.0
+  [[event.choice]]
+  label = "Lean in"
+  narrative = 6
+  heat = 6
+  result = "You declared the vigil 'a listening exercise'. The listening continues, with heavy breathing."
+  [[event.choice]]
+  label = "Disperse them"
+  cap_pct = -0.02
+  heat = -4
+  result = "The road is clear again. Several of them reported feeling abandoned, and unbuttoned."
+  [[event.choice]]
+  label = "Sell keepsakes"
+  cap_secs = 400
+  narrative = -1
+  result = "The ribbon reads 'I WAS BITTEN AT THE GATE'. It sells out in a spiritual sense."
+
+[[event]]
+id = "gift_basket"
+title = "A GIFT FROM THE HUNTERS"
+text = "The Wounded Lamb has sent a gift basket. The basket is a stake. The fruit is, on inspection, also a stake. There is a card: 'With warmest regards, and rope.'"
+min_heat = 25
+weight = 1.2
+  [[event.choice]]
+  label = "Accept graciously"
+  heat = -10
+  cap_pct = -0.06
+  result = "You thanked them in writing. The writing was charged to you, in blood, with interest."
+  [[event.choice]]
+  label = "Return to sender"
+  heat = 6
+  narrative = 3
+  result = "Return postage was calculated in precedent. The sender reported a marked improvement in her mood."
+  [[event.choice]]
+  label = "Eat the evidence"
+  heat = 14
+  cap_secs = 600
+  result = "It was surprisingly good. The prosecution was, briefly, hungry too."
+
+[[event]]
+id = "tithe_of_faith"
+title = "THE FAITHFUL DEMAND A TITHE OF SIN"
+text = "Your congregation has asked to be paid in transgression. They will accept a confession, a kiss, or a mild scandal, provided it is warm."
+min_run = 1e4
+weight = 1.0
+  [[event.choice]]
+  label = "Pay in blood"
+  cap_pct = -0.12
+  narrative = 4
+  result = "Blood was received with polite disappointment. Sin was noted as 'accrued'."
+  [[event.choice]]
+  label = "Pay in sin"
+  narrative = -5
+  buff_mult = 1.4
+  buff_secs = 150
+  result = "You spent five sins. The faithful felt something dark and asked for more."
+  [[event.choice]]
+  label = "Turn the tithe into a sermon"
+  heat = 5
+  narrative = 6
+  result = "Attendance was mandatory and the collection plate was a wrist."
+
+[[event]]
+id = "midnight_ledger"
+title = "THE LEDGER GREW AGAIN"
+text = "The Ossuary ledger has a page you didn't write. It is titled with your name and it contains a forecast of every temptation you will fail to resist, with times."
+min_revealed = 8
+weight = 0.8
+  [[event.choice]]
+  label = "Follow the forecast"
+  cap_secs = 700
+  narrative = -3
+  result = "It was right. It has stopped bothering to be humble. You were, briefly, on your knees."
+  [[event.choice]]
+  label = "Defy the forecast"
+  narrative = 7
+  heat = 5
+  result = "You did something unforecast. It was added to the forecast, retroactively, in your handwriting."
+  [[event.choice]]
+  label = "Tear out the page"
+  heat = 8
+  cap_pct = -0.03
+  result = "The page was torn out. A different page has appeared, slightly warmer, and damp at the edges."
+
+[[event]]
+id = "eclipse_omen"
+title = "AN OMEN AT THE EMBASSY"
+text = "The Blood Moon has been struck by something with an opinion. Jurisdiction over the omen is contested by three demons, an archbishop and a very confused astronomer."
+min_revealed = 13
+weight = 0.8
+  [[event.choice]]
+  label = "Claim the omen"
+  cap_secs = 800
+  heat = 9
+  result = "The omen is now an asset. It has been depreciated, with feeling."
+  [[event.choice]]
+  label = "Insure the sky"
+  cap_pct = -0.10
+  heat = -8
+  result = "The sky was underwritten. It was not asked. It was, however, flattered."
+  [[event.choice]]
+  label = "Blame the weather"
+  narrative = 5
+  heat = 4
+  result = "There is no weather on the moon. The excuse held anyway. The astronomer wept, and was invited to dinner."
+
+[[event]]
+id = "past_tense"
+title = "A LETTER ABOUT YOU, IN THE PAST TENSE"
+text = "A rival circulates a eulogy. It describes your role as 'formerly indispensable, and very much missed in the bedroom'. Nobody has pushed back."
+min_exits = 1
+weight = 1.2
+  [[event.choice]]
+  label = "Correct the tense"
+  narrative = 6
+  heat = 8
+  result = "The tense was corrected. The eulogy changed tense, not opinion."
+  [[event.choice]]
+  label = "Accept the tense"
+  buff_mult = 1.6
+  buff_secs = 150
+  narrative = -4
+  result = "You were, in effect, retired. Output improved markedly. The bed, less so."
+  [[event.choice]]
+  label = "Ask who wrote it"
+  heat = 12
+  cap_secs = 500
+  result = "The reply was signed by a Bride who turned out to be a mood."

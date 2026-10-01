@@ -1,0 +1,208 @@
+# Bloodline tree (spent with Potency). Three branches, each a chain (node N requires node N-1).
+# effect kinds: start_proxies (sum) | offline_eff (sum) | start_capital (max) | all_mult (product)
+#               tier_mult (product, tiers tier_from..tier_to, 1-based) | momentum_cap (sum) |
+#               momentum_grace (sum) | momentum_bonus (sum) | reveal (sum) |
+#               proxy_discount (max) | unit_discount (max)
+
+[[branch]]
+id = "exit"
+name = "THE LONG SLEEP"
+blurb = "Rest, beautiful monster. The household feeds in your name."
+
+[[branch]]
+id = "voice"
+name = "PREDATION"
+blurb = "Mercy was a mortal habit. Shed it, one bite at a time."
+
+[[branch]]
+id = "accel"
+name = "PERDITION"
+blurb = "Frenzy, and Hell arriving early, dressed for dinner."
+
+# ---- THE LONG SLEEP: offline gains and automation ---------------------------
+[[node]]
+id = "e1"
+branch = "exit"
+name = "Sleeper's Instructions"
+desc = "Begin every night with a Thrall already working the Alley Kiss."
+cost = 1
+effect = "start_proxies"
+value = 1
+
+[[node]]
+id = "e2"
+branch = "exit"
+name = "Coffin Comforts"
+desc = "Offline efficiency +25% (base 50%)."
+cost = 3
+requires = "e1"
+effect = "offline_eff"
+value = 0.25
+
+[[node]]
+id = "e3"
+branch = "exit"
+name = "Reliquary of Coins"
+desc = "Begin every waking with †5,000."
+cost = 8
+requires = "e2"
+effect = "start_capital"
+value = 5000
+
+[[node]]
+id = "e4"
+branch = "exit"
+name = "Household Rota"
+desc = "Begin every waking with Thralls on the first 4 domains."
+cost = 20
+requires = "e3"
+effect = "start_proxies"
+value = 3
+
+[[node]]
+id = "e5"
+branch = "exit"
+name = "Centuries of Slumber"
+desc = "Offline efficiency +25% (reaching 100%)."
+cost = 50
+requires = "e4"
+effect = "offline_eff"
+value = 0.25
+
+[[node]]
+id = "e6"
+branch = "exit"
+name = "The House Runs Itself"
+desc = "Begin every waking with Thralls on the first 8 domains and †5,000,000."
+cost = 120
+requires = "e5"
+effect = "start_proxies"
+value = 4
+extra_start_capital = 5000000
+
+# ---- PREDATION: raw multipliers ---------------------------------------------
+[[node]]
+id = "v1"
+branch = "voice"
+name = "Silence the Conscience"
+desc = "All output x2."
+cost = 1
+effect = "all_mult"
+value = 2
+
+[[node]]
+id = "v2"
+branch = "voice"
+name = "Street-Level Appetite"
+desc = "Domains 1-5 output x3."
+cost = 3
+requires = "v1"
+effect = "tier_mult"
+value = 3
+tier_from = 1
+tier_to = 5
+
+[[node]]
+id = "v3"
+branch = "voice"
+name = "A Refined Palate"
+desc = "All output x2."
+cost = 8
+requires = "v2"
+effect = "all_mult"
+value = 2
+
+[[node]]
+id = "v4"
+branch = "voice"
+name = "Feeding the Salons"
+desc = "Domains 6-10 output x3."
+cost = 20
+requires = "v3"
+effect = "tier_mult"
+value = 3
+tier_from = 6
+tier_to = 10
+
+[[node]]
+id = "v5"
+branch = "voice"
+name = "Uncontested Hunting Ground"
+desc = "All output x3."
+cost = 50
+requires = "v4"
+effect = "all_mult"
+value = 3
+
+[[node]]
+id = "v6"
+branch = "voice"
+name = "The Hunger of the Damned"
+desc = "Domains 11-20 output x5."
+cost = 120
+requires = "v5"
+effect = "tier_mult"
+value = 5
+tier_from = 11
+tier_to = 20
+
+# ---- PERDITION: frenzy and unlocks ------------------------------------------
+[[node]]
+id = "a1"
+branch = "accel"
+name = "Fevered Blood"
+desc = "Frenzy cap +50 (bonus scales with it)."
+cost = 1
+effect = "momentum_cap"
+value = 50
+
+[[node]]
+id = "a2"
+branch = "accel"
+name = "Sustained Rapture"
+desc = "Frenzy holds 6s longer before it fades."
+cost = 3
+requires = "a1"
+effect = "momentum_grace"
+value = 6
+
+[[node]]
+id = "a3"
+branch = "accel"
+name = "Early Access to the Night"
+desc = "Two more domains are visible at the start of every waking."
+cost = 8
+requires = "a2"
+effect = "reveal"
+value = 2
+
+[[node]]
+id = "a4"
+branch = "accel"
+name = "Bulk Discount on Devotion"
+desc = "Thralls cost 50% less."
+cost = 20
+requires = "a3"
+effect = "proxy_discount"
+value = 0.5
+
+[[node]]
+id = "a5"
+branch = "accel"
+name = "Economies of Ruin"
+desc = "Domain units cost 10% less."
+cost = 50
+requires = "a4"
+effect = "unit_discount"
+value = 0.1
+
+[[node]]
+id = "a6"
+branch = "accel"
+name = "Apotheosis of Frenzy"
+desc = "Frenzy cap +50 and its output bonus per point doubles."
+cost = 120
+requires = "a5"
+effect = "momentum_cap"
+value = 50
+extra_momentum_bonus = 0.005

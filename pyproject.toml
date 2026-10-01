@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sanguine"
+dynamic = ["version"]
+
+description = "Sanguine - a grimdark terminal idle game of infernal vampires"
+requires-python = ">=3.11"
+dependencies = ["textual>=1.0"]
+
+[project.scripts]
+sanguine = "sanguine.__main__:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "sanguine.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["sanguine*"]
+
+[tool.setuptools.package-data]
+sanguine = ["content/*.toml", "ui/*.tcss"]

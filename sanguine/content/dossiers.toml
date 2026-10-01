@@ -1,0 +1,207 @@
+# The Court. Positions are world cells (x right, y down). `links` draw red string.
+# cond types: lifetime (blood), owned (venture index 0-based + value), heat_peak, events, exits
+# bonus_*: passive; choice: optional one-time decision (same effect keys as events).
+
+[[dossier]]
+id = "d_founding"
+faction = "Your Own Line"
+title = "The Sire's Last Letter"
+x = 4
+y = 14
+links = ["d_veil", "d_choir", "d_thirst"]
+cond = { type = "lifetime", value = 100 }
+bonus_mult = 1.03
+text = "One alley, one stranger, one whispered yes. The letter tells you what you are in a single sentence, which your Sire has since revised in your throat."
+
+[[dossier]]
+id = "d_veil"
+faction = "The Conclave of the Veil"
+title = "Charter of the Veil"
+x = 34
+y = 3
+links = ["d_founding", "d_ash", "d_gazette", "d_veil2"]
+cond = { type = "owned", venture = 1, value = 10 }
+bonus_narr = 0.02
+text = "The Conclave exists to ensure that what mortals saw last night was, on reflection, a dream. Its budget is classified as 'discretion'. Its chambers have no windows, only curtains, and nobody has seen who is behind them."
+
+[[dossier]]
+id = "d_choir"
+faction = "The Choir of the Wounded Lamb"
+title = "Hymnal of the Wounded Lamb (draft)"
+x = 34
+y = 27
+links = ["d_founding", "d_choir2"]
+cond = { type = "heat_peak", value = 30 }
+text = "Holy war, sung. Each verse is set to a melody, and each melody to a stake. Rehearsals are held in the chapel beneath your chapel, and the choirmaster has the most beautiful throat."
+  [[dossier.choice]]
+  label = "Learn the hymns"
+  heat = -15
+  narrative = 3
+  result = "You memorised the hymns. You can now be heard praying from three streets away, and you moan in the right key."
+  [[dossier.choice]]
+  label = "Sing off-key"
+  heat = 10
+  narrative = 6
+  result = "You improvised. The Choir has added your blasphemy to the canon, with a descant."
+
+[[dossier]]
+id = "d_ash"
+faction = "The Gerontocracy of Ash"
+title = "Minutes of the Gerontocracy"
+x = 66
+y = 1
+links = ["d_veil", "d_ash2"]
+cond = { type = "owned", venture = 4, value = 10 }
+bonus_heat = 0.95
+text = "The Elders ensure that no one is ever finally destroyed. Their minutes are eleven thousand pages long and record one decision: to keep waking. Several of them have not moved, or blinked, since the Reformation."
+
+[[dossier]]
+id = "d_gazette"
+faction = "The Pale Gazette"
+title = "The Pale Gazette: Final Edition"
+x = 62
+y = 13
+links = ["d_veil", "d_gazette2"]
+cond = { type = "events", value = 3 }
+bonus_narr = 0.03
+text = "The last newspaper prints obituaries of the not-yet-dead, one copy a night, and reads it aloud to an empty opera house. Its editorial line is that things were better when there were witnesses."
+  [[dossier.choice]]
+  label = "Buy the archive"
+  cap_pct = -0.08
+  narrative = 8
+  result = "You now own every unpublished scandal. It is smaller than advertised, and slightly sticky."
+  [[dossier.choice]]
+  label = "Let it fade"
+  heat = -6
+  narrative = 2
+  result = "The final edition ran with a blank front page. It was widely praised, and later, widely kissed."
+
+[[dossier]]
+id = "d_thirst"
+faction = "The Perpetual Thirst"
+title = "Liturgy of the Open Mouth"
+x = 6
+y = 32
+links = ["d_founding", "d_vein"]
+cond = { type = "lifetime", value = 1e8 }
+bonus_mult = 1.05
+text = "A cult whose sole doctrine is that the cup is never full. Members greet each other by baring the neck. Doubters are placed in a chair facing a mirror, and asked to describe what they see."
+
+[[dossier]]
+id = "d_vein"
+faction = "The Church of the Open Vein"
+title = "Sermon on the Removal of Resistance"
+x = 62
+y = 31
+links = ["d_thirst", "d_choir2"]
+cond = { type = "lifetime", value = 1e12 }
+bonus_mult = 1.05
+text = "A rival congregation devoted to removing all resistance from every act, including doubt, decency, and the concept of a door. Their temple is a bed, and it has no edges."
+  [[dossier.choice]]
+  label = "Adopt the doctrine"
+  narrative = 10
+  heat = 8
+  result = "You removed a restraint you'd been relying on. It was fine. It was very, very fine."
+  [[dossier.choice]]
+  label = "Add friction"
+  cap_secs = 900
+  heat = -5
+  result = "You introduced a small delay. Somebody, breathless, billed for it."
+
+[[dossier]]
+id = "d_veil2"
+faction = "The Conclave of the Veil"
+title = "Internal Review of the Masquerade"
+x = 98
+y = 5
+links = ["d_veil", "d_embassy"]
+cond = { type = "owned", venture = 12, value = 10 }
+bonus_narr = 0.05
+text = "A Conclave audit of whether the world has kept the secret. The finding: the world is 'on track', pending a redefinition of secret."
+
+[[dossier]]
+id = "d_gazette2"
+faction = "The Pale Gazette"
+title = "Field Notes: The Ledger of Bones"
+x = 92
+y = 19
+links = ["d_gazette", "d_embassy"]
+cond = { type = "owned", venture = 10, value = 5 }
+bonus_mult = 1.05
+text = "The Gazette's last reporter tried to report on the Ossuary and discovered it had already written their obituary. The clipping is dated tomorrow, and smells faintly of her perfume."
+
+[[dossier]]
+id = "d_ash2"
+faction = "The Gerontocracy of Ash"
+title = "Motion to Postpone the Dawn"
+x = 128
+y = 3
+links = ["d_ash", "d_throne"]
+cond = { type = "owned", venture = 17, value = 1 }
+bonus_heat = 0.92
+text = "An Elder motion to postpone sunrise until a quorum of the damned can be assembled. The motion carried. The sun has been informed, and is said to have taken it personally."
+
+[[dossier]]
+id = "d_choir2"
+faction = "The Choir of the Wounded Lamb"
+title = "The Silent Order"
+x = 40
+y = 40
+links = ["d_choir", "d_vein"]
+cond = { type = "heat_peak", value = 75 }
+bonus_heat = 0.9
+text = "A breakaway wing of the Choir that has taken a vow of silence. Their hunting is total, and inaudible, and therefore impossible to plead with. They pray with their hands tied behind them. Nobody has yet asked who tied them."
+
+[[dossier]]
+id = "d_embassy"
+faction = "Hell"
+title = "Embassy Log: What We Signed"
+x = 122
+y = 17
+links = ["d_veil2", "d_gazette2", "d_throne"]
+cond = { type = "owned", venture = 16, value = 1 }
+bonus_narr = 0.08
+text = "The Embassy's first act was to certify its own existence. The Abyss agrees. So do the witnesses, all of whom signed afterwards, in a hand that is not quite theirs."
+
+[[dossier]]
+id = "d_throne"
+faction = "Your Own Line"
+title = "The Throne, Page One"
+x = 150
+y = 10
+links = ["d_embassy", "d_ash2", "d_gate"]
+cond = { type = "owned", venture = 18, value = 1 }
+bonus_mult = 1.1
+text = "A crown is a line item. The line item is warm. The Court asked whether the throne is being sat upon or sitting. The reply was a low, pleased sound from the cushions."
+
+[[dossier]]
+id = "d_gate"
+faction = "Hell"
+title = "It Has Begun Writing Its Own Letters"
+x = 150
+y = 27
+links = ["d_throne", "d_mirror"]
+cond = { type = "owned", venture = 19, value = 1 }
+bonus_mult = 1.25
+text = "The Gate has begun addressing you by an older name. The letters are cordial. They refer to you as 'the vessel', in a tone that makes your teeth ache."
+  [[dossier.choice]]
+  label = "Read the letter"
+  narrative = 20
+  heat = 20
+  result = "You read it. It was accurate. It was accurate about you, and about what you want."
+  [[dossier.choice]]
+  label = "Do not read it"
+  heat = -10
+  narrative = 4
+  result = "You did not read it. It filed your not-reading as consent."
+
+[[dossier]]
+id = "d_mirror"
+faction = "???"
+title = "A Letter About You (Past Tense)"
+x = 100
+y = 33
+links = ["d_gate"]
+cond = { type = "exits", value = 1 }
+bonus_narr = 0.1
+text = "This letter is dated after you sleep. It thanks you for your service as the first body, the first bite, the first name. It is unsigned. It doesn't need to be."

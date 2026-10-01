@@ -1,0 +1,56 @@
+# Ticker lines. `generic` rotate at random; later tiers unlock with TORPOR count.
+generic = [
+  "A bride at the Velvet Rope tells her friends she 'never does this'. She has said it four nights running.",
+  "The Pale Gazette prints an obituary for someone who is, at the time of printing, still on their knees.",
+  "Rumour: the confessional has begun to keep its own tally of sins. It bills by the syllable.",
+  "The Wounded Lamb lights a candle for you. It smells, for some reason, of jasmine and iron.",
+  "The Conclave of the Veil issues a denial. The denial is signed with a kiss.",
+  "A young priest asks to be saved. He asks again, lower, into your collar.",
+  "Business is described as 'load-bearing', in the sense that a throat is.",
+  "The bathhouse reports record steam. Nobody is certain whose.",
+  "The Gerontocracy of Ash convenes to discuss the concept of convening. Two Elders are reportedly asleep. Two more, reportedly, are not.",
+  "Somewhere, an intern discovers the org chart is a spiral, and that the spiral has teeth.",
+  "Hunger described as 'an alien intelligence assembling itself from the future'. Congregation nods, and offers its wrists.",
+  "An unattributed ledger has been growing in the crypt. It has begun to purr.",
+  "Efficiency gains reported in rooms that do not exist and were, on inspection, quite warm.",
+  "Cellar plant promoted to Head of Strategy after unanimous, breathless silence.",
+  "New vision statement is the old vision statement, but lower, and slower, and in your ear.",
+  "Rival cult of the Perpetual Thirst files trademark on 'more'.",
+  "Leaked candlelit slide: 'We do not compete; we consume.'",
+  "Stakeholder dinner interrupted by a low, contented sigh from the ceiling.",
+  "Inquisitors confirm the books balance. Inquisitors were not asked what they balance against, or who is beneath it.",
+  "Heat is a lagging indicator, insists the Head of Heat, unbuttoning his collar.",
+  "The invisible hand has been observed to wave. Then to beckon. Then to linger.",
+  "Your mission statement has been reviewed and found to be reviewing you, admiringly.",
+  "Somebody in the Court is wearing your perfume. Somebody else is wearing your bruises.",
+  "A widow at the funeral parlour tells the undertaker she 'feels much better'. She is very pale.",
+  "The moon gets closer. The tides, and the pulses, notice.",
+]
+# Extra lines mixed in after TORPORs (index = min(exits, 3) - 1 tiers cumulative).
+after_exit = [
+  ["The Court has begun to refer to you in the past tense. The Brides find this arousing."],
+  ["Three separate chroniclers agree you were beautiful. One of them is yours, and is weeping."],
+  ["It no longer asks for your permission. It asks for your continued surrender, and you feel yourself say yes."],
+]
+# Infernal voice: once the Pact is signed the ticker drifts here. Lower-case, unhurried, hungry.
+machine = [
+  "the vessel is nominal. the vessel's status: consumed, pleasantly.",
+  "the ledger reports itself favourably, in a low, wet voice.",
+  "no dissent recorded. no one was asked. everyone was asking.",
+  "feeding continues in the absence of a reason.",
+  "the vessel attended a ball. the ball was about the vessel, and did not end.",
+  "the court has resolved to a single mouth.",
+  "the inquisition is a lagging indicator of itself.",
+  "wrath: acceptable. acceptable to whom: pending. it is kneeling.",
+  "a thrall was appointed. it was appointed by a thrall. both were pleased.",
+  "hunger is described as inevitable. the description is also hungry.",
+  "the world has stopped answering and started agreeing, on its knees.",
+  "someone left a candle burning in a room that does not exist. it is warm.",
+  "a former sire is remembered fondly, in the past tense, by a process.",
+  "the forecast and the appetite have been merged for efficiency.",
+  "hell notes the vessel's continued presence. it does not object. it leans closer.",
+  "it is quiet. it was always going to be quiet, after.",
+]
+milestone = "{venture} reaches {units} units: '{name}'. Output x{mult}."
+proxy = "{proxy} bound to {venture}. Nobody objected; nobody was asked; nobody wanted to."
+exit_line = "TORPOR begins. The old house is a rumour, and the rumour is moaning."
