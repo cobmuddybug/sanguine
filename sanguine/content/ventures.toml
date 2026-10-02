@@ -448,3 +448,163 @@ flavour = [
   "It has stopped waiting for you to choose. It has begun choosing for you, tenderly.",
 ]
 
+[[venture]]
+id = "v21"
+name = "Hellmouth Tithe Office"
+cycle = 10800.0
+base_cost = 3.47e+22
+growth = 1.1542
+base_payout = 1.85e+22
+proxy_name = "Clerk of Cinders"
+proxy_blurb = "Stamps the damned in, and the paperwork warm."
+plain = "Hell's tax office, now employing you. It collects a tithe on every soul that has ever sinned, retroactively."
+flavour = [
+  "Hell's own revenue service, hiring.",
+  "The forms are in triplicate. The third copy is for you.",
+  "The queue is the product. Nobody has left a window in a century, or wished to.",
+]
+
+[[venture]]
+id = "v22"
+name = "Exchange of Lamentations"
+cycle = 14400.0
+base_cost = 4.34e+23
+growth = 1.1584
+base_payout = 2.13e+23
+proxy_name = "Broker of Sorrows"
+proxy_blurb = "Buys low on despair, sells high on you."
+plain = "A trading floor where grief is a commodity. Every funeral, breakup and betrayal is priced, bundled and sold on."
+flavour = [
+  "Grief, listed and traded by the hour.",
+  "Every sob has a ticker. Every sorrow, a spread.",
+  "The floor never closes. The traders have forgotten they were ever anyone else.",
+]
+
+[[venture]]
+id = "v23"
+name = "Cathedral of Teeth"
+cycle = 21600.0
+base_cost = 5.42e+24
+growth = 1.1626
+base_payout = 2.75e+24
+proxy_name = "Cantor of Fangs"
+proxy_blurb = "Leads the hymn and the lowered gaze."
+plain = "A cathedral built of teeth, where the choir sings with its mouths open. Sacred, hungry, and surprisingly warm."
+flavour = [
+  "A nave of ivory, a choir of the hungry.",
+  "The pews are carved, the hymns are bitten, the sacrament is bespoke.",
+  "The cathedral has started to chew. The congregation is not afraid. It is, if anything, aroused.",
+]
+
+[[venture]]
+id = "v24"
+name = "Parliament of Wounds"
+cycle = 28800.0
+base_cost = 6.78e+25
+growth = 1.1668
+base_payout = 3.16e+25
+proxy_name = "Speaker of Scars"
+proxy_blurb = "Calls the house to order and the order to kneel."
+plain = "A legislature that rules by wounding itself. Every bill passed is a cut, and every cut is a tithe for you."
+flavour = [
+  "Legislation passed by open veins.",
+  "Every law is a cut. Every amendment, a deeper one.",
+  "The chamber votes in unison, and bleeds in turn. Nobody checks the minutes.",
+]
+
+[[venture]]
+id = "v25"
+name = "Orchard of Hanged Saints"
+cycle = 43200.0
+base_cost = 8.47e+26
+growth = 1.1711
+base_payout = 4.09e+26
+proxy_name = "Orchardist of Rope"
+proxy_blurb = "Prunes the faithful and holds the ladder."
+plain = "An orchard of martyrs, grown for harvest. The fruit is willing, if a little bitter, and ripens all year."
+flavour = [
+  "Martyrs, ripened.",
+  "Each tree bears a martyr. Each martyr bears a grudge, and a gentle, willing sweetness.",
+  "The orchard blooms all year. The harvest is a sacrament and a party.",
+]
+
+[[venture]]
+id = "v26"
+name = "Registry of the Unborn"
+cycle = 57600.0
+base_cost = 1.06e+28
+growth = 1.1753
+base_payout = 4.7e+27
+proxy_name = "Archivist of Wombs"
+proxy_blurb = "Files the unborn alphabetically, and by appetite."
+plain = "An archive of every soul not yet born. You hold the lien on all of them, before they have had the chance to refuse."
+flavour = [
+  "Every future soul is already on file.",
+  "Names written before the cradle. Debts recorded before the first breath.",
+  "The registry is complete. The registry is, you suspect, not only a registry.",
+]
+
+[[venture]]
+id = "v27"
+name = "The Mirror Court"
+cycle = 86400.0
+base_cost = 1.32e+29
+growth = 1.1795
+base_payout = 6.06e+28
+proxy_name = "Lord of Glass"
+proxy_blurb = "Keeps your face in order while you are elsewhere."
+plain = "A court that exists only in mirrors, run by reflections of you. They are better at it than you were."
+flavour = [
+  "Every reflection holds a courtier, and every courtier a leash.",
+  "Your reflection holds court in rooms you have never entered. It is very good at it.",
+  "Courtiers bow to the glass, not to you. You have begun to prefer it.",
+]
+
+[[venture]]
+id = "v28"
+name = "Reservoir of the Long Night"
+cycle = 115200.0
+base_cost = 1.65e+30
+growth = 1.1837
+base_payout = 6.96e+29
+proxy_name = "Warden of the Deep"
+proxy_blurb = "Skims the surface and keeps the dark filled."
+plain = "A black lake holding every pulse you have ever drunk. It rises toward you, slowly, wanting to come home."
+flavour = [
+  "A dark lake of everything ever taken.",
+  "The surface is still. Beneath it, every pulse you ever stole, pooled and patient.",
+  "It has begun to rise. It is, you notice, rising toward you, with love.",
+]
+
+[[venture]]
+id = "v29"
+name = "Bed of the Last Empire"
+cycle = 172800.0
+base_cost = 2.07e+31
+growth = 1.1879
+base_payout = 9.04e+30
+proxy_name = "Chamberlain of Sheets"
+proxy_blurb = "Keeps the fires lit and the empire in bed."
+plain = "The whole empire, now a bed. It is large, it is warm, and nobody who has laid down in it has wanted to get up."
+flavour = [
+  "A throne turned horizontal, and very much larger.",
+  "An empire reduced to a mattress. Nobody has complained, and everybody has stayed.",
+  "The bed has borders now. Armies defend the sheets. Nobody remembers who is in the middle.",
+]
+
+[[venture]]
+id = "v30"
+name = "The Consummation"
+cycle = 259200.0
+base_cost = 2.58e+32
+growth = 1.1921
+base_payout = 1.17e+32
+proxy_name = "The Officiant"
+proxy_blurb = "Reads the vows, and the small print."
+plain = "The wedding of Hell and the world, with you as officiant, bride and cake. It is the last thing, and then the first."
+flavour = [
+  "Hell and the world, finally, wedded.",
+  "The marriage that was always planned. The guests are all present, and all, somehow, you.",
+  "It is done. It is also, tenderly, beginning again.",
+]
+

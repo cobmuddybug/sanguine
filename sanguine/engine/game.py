@@ -3,17 +3,22 @@ from __future__ import annotations
 
 import math
 import random
+import time
 from typing import Callable
 
+from .ages import AgesMixin
+from .annals import AnnalsMixin
 from .bignum import money
 from .content import Content, VentureDef
+from .dynasty import DynastyMixin
 from .state import BULK_MODES, GameState
 
 MOMENTUM_MAX = 100.0        # base cap (Potency raises it)
 MOMENTUM_BONUS = 0.005      # +0.5% output per momentum point (max +50%)
 MOMENTUM_GRACE = 4.0        # seconds of inactivity before momentum decays
 SOV_BASE = 1e20             # lifetime Blood per sqrt-step of Potency (tuned with tools/sim.py)
-SOV_MULT_PER_POINT = 0.01   # +1% output per Potency ever earned
+SOV_MULT_COEF = 1.0        # output = 1 + COEF * earned^EXP (soft: a Torpor is a step, not a leap)
+SOV_MULT_EXP = 0.25
 BASE_OFFLINE_EFF = 0.5
 MOMENTUM_DECAY = 2.0        # points per second once idle
 OFFLINE_CAP = 8 * 3600.0
@@ -24,18 +29,25 @@ HEAT_RISE, HEAT_FALL = 0.4, 0.15   # points per second toward the target
 HEAT_PENALTY_START = 75.0   # output penalty ramps to -25% at 100
 EVENT_GAP = (180.0, 320.0)
 EVENT_GRACE_RUN = 2000.0    # no events before this much run blood
+BASE_VENTURES = 20          # domains available before the Compact; the rest are 'the Below'
+GATE_INDEX = 19             # The Gate of Perdition
 NARRATIVE_VENTURES = (1, 12, 16)   # velvet rope club, endless masquerade, infernal embassy (they breed Sin)
 NARRATIVE_PER_UNIT = 0.004
 
 
-class Game:
-    def __init__(self, content: Content, state: GameState | None = None, rng: random.Random | None = None):
+class Game(DynastyMixin, AgesMixin, AnnalsMixin):
+    def __init__(self, content: Content, state: GameState | None = None, rng: random.Random | None = None,
+                 clock: Callable[[], float] | None = None):
         self.c = content
         self.s = state or GameState.new(len(content.ventures))
         self.rng = rng or random.Random()
+        self.clock = clock or time.time
+        self._pdef = {p["id"]: p for p in content.perks}
+        self._slow = 0.0
         self._udef = {u.id: u for u in content.upgrades}
         self._ddef = {d["id"]: d for d in content.dossiers}
         self._ndef = {n["id"]: n for n in content.nodes}
+        self._edef = {e["id"]: e for e in content.endless}
         self._headline_timer = self.rng.uniform(*HEADLINE_EVERY)
         self.on_log: Callable[[str], None] | None = None
         self.on_notify: Callable[[str], None] | None = None
@@ -63,8 +75,12 @@ class Game:
                 return ms
         return None
 
+    def n_active(self) -> int:
+        """Domains in play: the Below (21+) only opens once the Compact is signed."""
+        return len(self.s.ventures) if self.s.posthuman else min(BASE_VENTURES, len(self.s.ventures))
+
     def all_ventures_floor(self) -> int:
-        return min(v.owned for v in self.s.ventures)
+        return min(v.owned for v in self.s.ventures[:BASE_VENTURES])
 
     def global_milestone_mult(self) -> float:
         floor = self.all_ventures_floor()
@@ -123,7 +139,7 @@ class Game:
         m = 1.0
         for v in self.tree_values("all_mult"):
             m *= v
-        return m
+        return m * self.endless_mult("all_mult")
 
     def tree_tier_mult(self, i: int) -> float:
         m = 1.0
@@ -131,13 +147,16 @@ class Game:
             n = self._ndef[nid]
             if n["effect"] == "tier_mult" and n["tier_from"] - 1 <= i <= n["tier_to"] - 1:
                 m *= n["value"]
-        return m
+        for e in self.c.endless:
+            if e["effect"] == "tier_mult" and e["tier_from"] - 1 <= i <= e["tier_to"] - 1:
+                m *= e["value"] ** self.endless_level(e["id"])
+        return m * self.perk_tier_mult(i)
 
     def sov_mult(self) -> float:
-        return 1.0 + SOV_MULT_PER_POINT * self.s.sov_earned
+        return 1.0 + SOV_MULT_COEF * self.s.sov_earned ** SOV_MULT_EXP
 
     def momentum_cap(self) -> float:
-        return MOMENTUM_MAX + self.tree_sum("momentum_cap")
+        return MOMENTUM_MAX + self.tree_sum("momentum_cap") + self.endless_sum("momentum_cap")
 
     def momentum_grace(self) -> float:
         return MOMENTUM_GRACE + self.tree_sum("momentum_grace")
@@ -147,6 +166,40 @@ class Game:
 
     def offline_eff(self) -> float:
         return BASE_OFFLINE_EFF + self.tree_sum("offline_eff")
+
+    # ---- endless Bloodline ---------------------------------------------
+    def endless_level(self, eid: str) -> int:
+        return int(self.s.endless.get(eid, 0))
+
+    def endless_sum(self, effect: str) -> float:
+        return sum(e["value"] * self.endless_level(e["id"]) for e in self.c.endless if e["effect"] == effect)
+
+    def endless_mult(self, effect: str) -> float:
+        m = 1.0
+        for e in self.c.endless:
+            if e["effect"] == effect:
+                m *= e["value"] ** self.endless_level(e["id"])
+        return m
+
+    def endless_cost(self, e: dict) -> float:
+        return float(math.ceil(e["base_cost"] * e["growth"] ** self.endless_level(e["id"])))
+
+    def endless_maxed(self, e: dict) -> bool:
+        return self.endless_level(e["id"]) >= e.get("max_level", 10 ** 9)
+
+    def can_buy_endless(self, e: dict) -> bool:
+        return not self.endless_maxed(e) and self.s.sovereignty >= self.endless_cost(e)
+
+    def buy_endless(self, e: dict) -> bool:
+        if not self.can_buy_endless(e):
+            return False
+        self.s.sovereignty -= self.endless_cost(e)
+        self.s.endless[e["id"]] = self.endless_level(e["id"]) + 1
+        self.log(f"{e['name']} deepens to level {self.endless_level(e['id'])}.")
+        return True
+
+    def offline_cap(self) -> float:
+        return OFFLINE_CAP + 3600.0 * (self.endless_sum("offline_cap") + self.perk_sum("offline_cap"))
 
     def node_owned(self, nid: str) -> bool:
         return nid in self.s.tree
@@ -172,12 +225,15 @@ class Game:
     def sov_total_for(lifetime: float) -> int:
         return int(math.floor(math.sqrt(max(lifetime, 0.0) / SOV_BASE)))
 
+    def raw_award(self) -> int:
+        return max(0, self.sov_total_for(self.s.lifetime_capital) - int(self.s.sov_raw))
+
     def exit_award(self) -> int:
-        return max(0, self.sov_total_for(self.s.lifetime_capital) - int(self.s.sov_earned))
+        return int(self.raw_award() * (1.0 + self.endless_sum("sov_gain") + self.perk_sum("sov_gain")))
 
     def next_award_at(self) -> float:
-        """Lifetime capital at which the next Sovereignty point is earned."""
-        return (int(self.s.sov_earned) + max(self.exit_award(), 0) + 1) ** 2 * SOV_BASE
+        """Lifetime capital at which the next base Sovereignty point is earned."""
+        return (int(self.s.sov_raw) + self.raw_award() + 1) ** 2 * SOV_BASE
 
     def can_exit(self) -> bool:
         return self.exit_award() >= 1
@@ -190,7 +246,7 @@ class Game:
         """The Below has finished its audit: offer the compact."""
         s = self.s
         return (not s.posthuman and s.exits >= self.ENDING_MIN_EXITS and s.exits >= s.ending_retry_exit
-                and s.ventures[-1].owned >= 1 and not s.pending_event)
+                and s.ventures[GATE_INDEX].owned >= 1 and not s.pending_event)
 
     def sign_handover(self) -> None:
         """Accept. Begins the possessed New Game+ with a forced (possibly award-less) TORPOR."""
@@ -212,6 +268,7 @@ class Game:
         if award < 1 and not force:
             return 0
         s = self.s
+        s.sov_raw += self.raw_award()
         s.sovereignty += award
         s.sov_earned += award
         s.exits += 1
@@ -225,7 +282,7 @@ class Game:
         s.capital = sum(self.tree_values("start_capital"))
         s.run_capital = 0.0
         s.upgrades = []
-        s.buffs = []
+        s.buffs = [b for b in s.buffs if b["name"] != "event"]   # Age buffs outlast a Torpor
         s.momentum = 0.0
         s.heat = 0.0
         s.pending_event = ""
@@ -248,12 +305,15 @@ class Game:
         return 1.0 - min(0.25, max(0.0, self.s.heat - HEAT_PENALTY_START) / 100.0)
 
     def momentum_mult(self) -> float:
+        if self.hunt_rule() == "no_frenzy":
+            return 1.0
         return 1.0 + self.s.momentum * self.momentum_bonus()
 
     def global_mult(self) -> float:
         """Everything that scales ALL output equally (not per-venture)."""
         return (self.momentum_mult() * self.hyper_mult() * self.dossier_bonus("bonus_mult")
-                * self.buff_mult() * self.heat_penalty() * self.sov_mult() * self.tree_all_mult())
+                * self.buff_mult() * self.heat_penalty() * self.sov_mult() * self.tree_all_mult()
+                * self.lineage_mult() * self.annals_mult() * (1.0 + self.s.legacy))
 
     # ---- heat ----------------------------------------------------------
     def heat_mult(self) -> float:
@@ -265,7 +325,8 @@ class Game:
         return m
 
     def heat_target(self) -> float:
-        return min(110.0, HEAT_COEF * math.log10(1.0 + self.potential_rate()) * self.heat_mult())
+        fever = 1.5 if self.hunt_rule() == "fevered" else 1.0
+        return min(110.0, HEAT_COEF * math.log10(1.0 + self.potential_rate()) * self.heat_mult() * fever)
 
     def narrative_rate(self) -> float:
         units = sum(self.s.ventures[i].owned for i in NARRATIVE_VENTURES)
@@ -315,6 +376,8 @@ class Game:
         return self.s.narrative if u.currency == "narrative" else self.s.capital
 
     def can_buy_upgrade(self, u) -> bool:
+        if self.hunt_rule() == "no_rites" and u.currency == "capital":
+            return False
         return self.upgrade_visible(u) and self.upgrade_balance(u) >= u.cost
 
     def buy_upgrade(self, u) -> bool:
@@ -426,7 +489,8 @@ class Game:
 
     def can_hire(self, i: int) -> bool:
         v = self.s.ventures[i]
-        return i < self.s.revealed and not v.proxy and v.owned > 0 and self.s.capital >= self.proxy_cost(i)
+        return (i < self.s.revealed and not v.proxy and v.owned > 0 and self.s.capital >= self.proxy_cost(i)
+                and self.hunt_rule() != "no_thralls")
 
     def hire(self, i: int) -> bool:
         if not self.can_hire(i):
@@ -482,8 +546,12 @@ class Game:
                     v.running = False
                 self._earn(self.payout(i) * n)
         self._tick_heat_events(dt)
+        self._slow += dt
+        if self._slow >= 1.0:
+            self._slow = 0.0
+            self._slow_tick()
         # reveal silhouettes once affordable
-        while s.revealed < len(self.c.ventures) and s.capital >= self.c.ventures[s.revealed].base_cost:
+        while s.revealed < self.n_active() and s.capital >= self.c.ventures[s.revealed].base_cost:
             s.revealed += 1
         self._headline_timer -= dt
         if self._headline_timer <= 0:
@@ -497,6 +565,15 @@ class Game:
             elif lvl >= 1:
                 pool += list(self.c.headlines["machine"]) * lvl
             self.log(self.rng.choice(pool))
+
+    def _slow_tick(self) -> None:
+        """Once-a-second systems: wall-clock Ages and Hunts, Annals, the Retainer."""
+        self._ages_tick()
+        self._hunts_tick()
+        self._annals_tick()
+        if self.auto_exit_on() and not self.s.pending_event and self.can_exit():
+            if self.exit_award() >= max(10, 0.5 * self.s.sov_earned):
+                self.do_exit()
 
     def _tick_heat_events(self, dt: float) -> None:
         s = self.s
@@ -667,7 +744,7 @@ class Game:
 
     def offline(self, seconds: float) -> float:
         """Credit thrall income for time away. Returns blood gained."""
-        seconds = max(0.0, min(seconds, OFFLINE_CAP))
+        seconds = max(0.0, min(seconds, self.offline_cap()))
         gained = self.income_per_sec() * seconds * self.offline_eff()
         if gained > 0:
             self._earn(gained)

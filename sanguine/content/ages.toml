@@ -1,0 +1,125 @@
+# Ages: long real-time commissions. You commit Blood now (cost_hours x your potential income per hour),
+# pick a choice, and collect when the clock runs out. They cannot be rushed and they wait while you are away.
+# reward kinds: lineage (flat) | legacy (permanent +fraction to all output) | buff (mult for `hours` of play) |
+#               blood (hours of your potential income, paid in Blood)
+
+[[age]]
+id = "a1"
+name = "The Conclave Convenes"
+blurb = "The old houses meet in a cellar that shouldn't fit them. They wish to be told you are worth their time."
+hours = 12
+cost_hours = 2
+[[age.choice]]
+label = "Court them with gifts"
+note = "Lineage +2"
+kind = "lineage"
+value = 2
+[[age.choice]]
+label = "Frighten them with patience"
+note = "Legacy +2% output"
+kind = "legacy"
+value = 0.02
+
+[[age]]
+id = "a2"
+name = "The Long Vigil"
+blurb = "A saint has agreed to die slowly, in public, if someone will keep the candles lit."
+hours = 24
+cost_hours = 4
+[[age.choice]]
+label = "Keep the candles"
+note = "Lineage +3"
+kind = "lineage"
+value = 3
+[[age.choice]]
+label = "Sell the wax"
+note = "Return 20 hours of income in Blood"
+kind = "blood"
+value = 20
+
+[[age]]
+id = "a3"
+name = "A Wedding in Three Acts"
+blurb = "Two families, one betrothal, and a seating plan that is mostly a menu."
+hours = 18
+cost_hours = 3
+[[age.choice]]
+label = "Officiate"
+note = "x3 output for 6 hours of play"
+kind = "buff"
+value = 3
+hours = 6
+[[age.choice]]
+label = "Take the dowry"
+note = "Lineage +2"
+kind = "lineage"
+value = 2
+
+[[age]]
+id = "a4"
+name = "The Ossuary Audit"
+blurb = "The Bank of Bones has asked to see the books. The books have asked to see you."
+hours = 36
+cost_hours = 6
+[[age.choice]]
+label = "Open the vault"
+note = "Legacy +3% output"
+kind = "legacy"
+value = 0.03
+[[age.choice]]
+label = "Burn the ledger"
+note = "Lineage +4"
+kind = "lineage"
+value = 4
+
+[[age]]
+id = "a5"
+name = "Eclipse Season"
+blurb = "The moon will be absent for three nights. The city has decided to be brave about it."
+hours = 48
+cost_hours = 8
+[[age.choice]]
+label = "Hunt in the dark"
+note = "Lineage +5"
+kind = "lineage"
+value = 5
+[[age.choice]]
+label = "Sleep through it"
+note = "x5 output for 4 hours of play"
+kind = "buff"
+value = 5
+hours = 4
+
+[[age]]
+id = "a6"
+name = "The Orchard Fruits"
+blurb = "Something in the Orchard of Hanged Saints has ripened ahead of schedule. It smells like your name."
+hours = 30
+cost_hours = 5
+[[age.choice]]
+label = "Pick it yourself"
+note = "Legacy +3% output"
+kind = "legacy"
+value = 0.03
+[[age.choice]]
+label = "Let it fall"
+note = "Return 40 hours of income in Blood"
+kind = "blood"
+value = 40
+
+[[age]]
+id = "a7"
+name = "A Letter from the Below"
+blurb = "It is addressed to you and signed by you. The handwriting is better than yours."
+hours = 72
+cost_hours = 12
+[[age.choice]]
+label = "Answer it"
+note = "Lineage +8"
+kind = "lineage"
+value = 8
+[[age.choice]]
+label = "Frame it"
+note = "Legacy +5% output"
+kind = "legacy"
+value = 0.05

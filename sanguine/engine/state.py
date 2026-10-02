@@ -30,10 +30,25 @@ class GameState:
     hyper: list[str] = field(default_factory=list)     # Infernal Pacts (permanent)
     tree: list[str] = field(default_factory=list)      # Bloodline nodes owned (permanent)
     sov_earned: float = 0.0                            # total Sovereignty ever awarded
+    sov_raw: float = 0.0                               # base Potency points claimed (before Tithe bonus)
+    endless: dict = field(default_factory=dict)        # repeatable Bloodline levels {id: n}
     posthuman: bool = False        # signed the handover: New Game+
     machine_level: int = 0         # how far the voice has drifted (0 = human)
     ending_retry_exit: int = 0     # don't re-offer the compact before this many TORPORs
     final_seen: bool = False
+    lineage: float = 0.0           # Dynasty currency (spendable)
+    lineage_earned: float = 0.0    # total Lineage ever earned (also lifts output)
+    dynasties: int = 0
+    perks: list[str] = field(default_factory=list)       # Lineage perks owned (permanent)
+    perk_levels: dict = field(default_factory=dict)      # repeatable perk levels
+    legacy: float = 0.0            # permanent +fraction to all output, earned from Ages
+    feats: list[str] = field(default_factory=list)       # Annals earned
+    stats: dict = field(default_factory=dict)            # lifetime peaks the Annals watch
+    ages: dict = field(default_factory=dict)             # {"next","seq","offers":[...],"running":[...],"done"}
+    hunt: dict = field(default_factory=dict)             # {"day","week","active","daily_done","weekly_done"}
+    ages_done: int = 0
+    hunts_done: int = 0
+    settings: dict = field(default_factory=dict)         # e.g. {"auto_exit": True}
     peak_heat: float = 0.0
     next_event: float = 240.0
     pending_event: str = ""         # id of an event awaiting a choice
@@ -63,6 +78,8 @@ class GameState:
                               for vs in v]
             elif k in cls.__dataclass_fields__:
                 setattr(s, k, v)
+        if "sov_raw" not in d:
+            s.sov_raw = s.sov_earned   # pre-endless saves: every point was base
         while len(s.ventures) < n_ventures:
             s.ventures.append(VentureState())
         del s.ventures[n_ventures:]

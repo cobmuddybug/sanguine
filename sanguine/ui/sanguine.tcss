@@ -85,6 +85,14 @@ Toast { background: #0a100d; }
 #exit-info { width: 1fr; height: 4; content-align-vertical: middle; }
 #exit-btn { width: 18; height: 3; margin-top: 0; content-align: center middle; text-align: center; background: #e0243a; color: #07090a; margin-right: 1; }
 #exit-btn:hover { background: #ff5a6e; }
+#dynbar { height: 4; background: #0a100d; }
+#dyn-info { width: 1fr; height: 4; content-align-vertical: middle; }
+#dyn-btn { width: 18; height: 3; content-align: center middle; text-align: center; background: #e0243a; color: #07090a; margin-right: 1; }
+#dyn-btn:hover { background: #ff5a6e; }
+#dyn-btn.-off { background: #2a1418; color: #7a5a60; }
+#dyn-btn.-off:hover { background: #2a1418; color: #7a5a60; }
+#age-info, #annal-info { height: 4; background: #0a100d; padding: 0 1; content-align-vertical: middle; }
+#dynlist, #agelist, #annallist { height: 1fr; scrollbar-size-vertical: 1; }
 #exit-btn.-off { background: #2a1418; color: #7a5a60; }
 #exit-btn.-off:hover { background: #2a1418; color: #7a5a60; }
 #reset-btn { width: 14; height: 3; content-align: center middle; text-align: center; background: #12201a; color: #8fb59b; margin-right: 1; }
@@ -97,7 +105,7 @@ Toast { background: #0a100d; }
 .nrow { height: 3; border-left: thick #07090a; }
 .nrow:hover { background: #12201a; }
 .nrow.-selected { border-left: thick #e0243a; background: #0f1a14; }
-.n-name { width: 1fr; height: 3; content-align-vertical: middle; }
+.n-name { width: 1fr; height: 3; content-align-vertical: middle; text-wrap: nowrap; text-overflow: ellipsis; }
 .n-btn { width: 14; height: 3; content-align: center middle; text-align: center; background: #1c3a2a; color: #eafff0; }
 .n-btn:hover { background: #33ff66; color: #07090a; }
 .n-btn.-off { background: #101713; color: #4a5f52; }

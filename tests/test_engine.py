@@ -29,7 +29,7 @@ class Bignum(unittest.TestCase):
 
 class Economy(unittest.TestCase):
     def test_twenty_ventures(self):
-        self.assertEqual(len(C.ventures), 20)
+        self.assertEqual(len(C.ventures), 30)
         self.assertTrue(all(len(v.flavour) == 3 for v in C.ventures))
 
     def test_bulk_cost_matches_repeated_buys(self):
@@ -278,7 +278,7 @@ class ExitAndTree(unittest.TestCase):
         self.assertEqual((s.hyper, s.dossiers, s.narrative), (["uy_1"], ["d_founding"], 42))
         self.assertEqual(s.lifetime_capital, 100 * 1e20)
         self.assertFalse(g.can_exit())          # can't farm the same lifetime twice
-        self.assertAlmostEqual(g.sov_mult(), 1.10)
+        self.assertAlmostEqual(g.sov_mult(), 1.0 + 10 ** 0.25)
 
     def test_tree_chain_and_effects(self):
         g = fresh()
@@ -350,7 +350,7 @@ class Endgame(unittest.TestCase):
     def ready_game(self):
         g = fresh()
         g.s.exits = 3
-        g.s.ventures[-1].owned = 1
+        g.s.ventures[19].owned = 1
         return g
 
     def test_handover_gated_on_exits_and_final_venture(self):
@@ -358,7 +358,7 @@ class Endgame(unittest.TestCase):
         self.assertFalse(g.ending_ready())
         g.s.exits = 3
         self.assertFalse(g.ending_ready())          # no Gate of Perdition yet
-        g.s.ventures[-1].owned = 1
+        g.s.ventures[19].owned = 1
         self.assertTrue(g.ending_ready())
         g.s.pending_event = "audit"
         self.assertFalse(g.ending_ready())          # never mid-event
@@ -379,7 +379,7 @@ class Endgame(unittest.TestCase):
         self.assertTrue(g.s.posthuman)
         self.assertEqual(g.s.machine_level, 1)
         self.assertEqual(g.s.exits, exits_before + 1)
-        self.assertEqual(g.s.ventures[-1].owned, 0)  # run was reset
+        self.assertEqual(g.s.ventures[19].owned, 0)  # run was reset
         self.assertEqual((g.s.tree, g.s.hyper), (["v1"], ["uy_1"]))  # permanents kept
         self.assertFalse(g.ending_ready())
 
@@ -399,10 +399,296 @@ class Endgame(unittest.TestCase):
         g = fresh()
         g.s.machine_level = 3
         seen = []
-        g.on_log = seen.append
+        g.on_log = lambda t: seen.append(t) if not t.startswith("Annal") else None
         g.rng.seed(3)
         for _ in range(40):
             g._headline_timer = 0
             g.tick(0.1)
         machine = set(C.headlines["machine"])
         self.assertTrue(seen and all(x in machine for x in seen))
+
+
+class EndlessTests(unittest.TestCase):
+    def setUp(self):
+        self.g = Game(C)
+        self.n1 = self.g._edef["n1"]
+
+    def test_buy_scales_cost_and_multiplier(self):
+        g = self.g
+        g.s.sovereignty = 1e6
+        c0 = g.endless_cost(self.n1)
+        m0 = g.global_mult()
+        self.assertTrue(g.buy_endless(self.n1))
+        self.assertGreater(g.endless_cost(self.n1), c0)
+        self.assertAlmostEqual(g.global_mult() / m0, self.n1["value"])
+        self.assertEqual(g.s.sovereignty, 1e6 - c0)
+
+    def test_cannot_afford_or_exceed_max(self):
+        g = self.g
+        self.assertFalse(g.buy_endless(self.n1))
+        n2 = g._edef["n2"]
+        g.s.sovereignty = 1e30
+        for _ in range(n2["max_level"] + 3):
+            g.buy_endless(n2)
+        self.assertEqual(g.endless_level("n2"), n2["max_level"])
+        self.assertEqual(g.offline_cap(), 8 * 3600 + 16 * 3600)
+
+    def test_tithe_boosts_award_without_breaking_next_threshold(self):
+        g = self.g
+        g.s.lifetime_capital = 4e22          # sqrt(400) = 20 base points
+        self.assertEqual(g.exit_award(), 20)
+        g.s.endless["n3"] = 10               # +30%
+        self.assertEqual(g.exit_award(), 26)
+        g.do_exit()
+        self.assertEqual(g.s.sov_raw, 20)
+        self.assertEqual(g.s.sov_earned, 26)
+        self.assertEqual(g.exit_award(), 0)  # raw bookkeeping, not bonus, gates the next award
+
+    def test_legacy_save_migrates_sov_raw(self):
+        from sanguine.engine.state import GameState
+        s = GameState.from_dict({"sov_earned": 50.0}, len(C.ventures))
+        self.assertEqual(s.sov_raw, 50.0)
+        self.assertEqual(s.endless, {})
+
+
+class TheBelow(unittest.TestCase):
+    def test_below_hidden_until_compact(self):
+        g = Game(C)
+        self.assertEqual(g.n_active(), 20)
+        g.s.capital = 1e60
+        g.tick(0.1)
+        self.assertEqual(g.s.revealed, 20)       # tiers 21+ stay veiled
+        g.s.posthuman = True
+        self.assertEqual(g.n_active(), 30)
+        g.tick(0.1)
+        self.assertEqual(g.s.revealed, 30)
+
+    def test_global_milestones_ignore_the_below(self):
+        g = Game(C)
+        for v in g.s.ventures[:20]:
+            v.owned = 25
+        base = g.global_milestone_mult()
+        g.s.posthuman = True
+        self.assertEqual(g.global_milestone_mult(), base)   # unowned 21-30 must not zero the bonus
+
+    def test_below_tier_endless_only_hits_21_to_30(self):
+        g = Game(C)
+        g.s.endless["n5"] = 2
+        self.assertEqual(g.tree_tier_mult(19), 1.0)
+        v = g._edef["n5"]["value"] ** 2
+        self.assertAlmostEqual(g.tree_tier_mult(20), v)
+        self.assertAlmostEqual(g.tree_tier_mult(29), v)
+        g.s.tree = []
+        self.assertEqual(g.tree_tier_mult(19), 1.0)
+
+
+class Clock:
+    def __init__(self, t=1_700_000_000.0):
+        self.t = t
+
+    def __call__(self):
+        return self.t
+
+
+def timed():
+    clk = Clock()
+    return Game(C, rng=random.Random(1), clock=clk), clk
+
+
+class DynastyTests(unittest.TestCase):
+    def test_locked_until_compact_and_level(self):
+        g = fresh()
+        g.s.sov_earned = g.dynasty_threshold() * 1e3
+        self.assertEqual(g.lineage_award(), 0)
+        g.s.posthuman, g.s.machine_level = True, 3
+        self.assertFalse(g.can_dynasty())
+        g.s.machine_level = 4
+        self.assertTrue(g.can_dynasty())
+
+    def test_award_is_logarithmic_and_threshold_grows_each_dynasty(self):
+        g = fresh()
+        g.s.posthuman, g.s.machine_level = True, 4
+        t = g.dynasty_threshold()
+        g.s.sov_earned = t * 0.9
+        self.assertEqual(g.lineage_award(), 0)
+        g.s.sov_earned = t * 1e3                  # three decades x 3 per decade
+        self.assertEqual(g.lineage_award(), 9)
+        g.s.sov_earned = t * 1e6                  # a million times more Potency is only twice the Lineage
+        self.assertEqual(g.lineage_award(), 18)
+        g.s.dynasties = 1                         # threshold x10
+        self.assertEqual(g.lineage_award(), 15)
+        self.assertAlmostEqual(g.next_lineage_at() / g.dynasty_threshold(), 10 ** (16 / 3), places=3)
+
+    def test_do_dynasty_resets_potency_keeps_lineage_and_perks(self):
+        g = fresh()
+        g.s.posthuman, g.s.machine_level = True, 4
+        g.s.sov_earned = g.s.sov_raw = g.dynasty_threshold() * 1e3
+        g.s.sovereignty = 500
+        g.s.lifetime_capital = 1e40
+        g.s.tree = ["e1", "v1", "e6"]
+        g.s.endless = {"n1": 5}
+        g.s.perks = ["p1"]
+        self.assertEqual(g.do_dynasty(), 9)
+        s = g.s
+        self.assertEqual((s.lineage, s.lineage_earned, s.dynasties), (9, 9, 1))
+        self.assertEqual((s.sovereignty, s.sov_earned, s.sov_raw, s.lifetime_capital), (0, 0, 0, 0))
+        self.assertEqual(sorted(s.tree), ["e1", "v1"])      # heirloom keeps cost <= 20, drops e6 (120)
+        self.assertEqual(s.endless, {})
+        self.assertFalse(g.can_dynasty())                   # can't farm the same Potency twice
+        self.assertEqual(g.exit_award(), 0)
+
+    def test_perks_buy_chain_and_multiply(self):
+        g = fresh()
+        p3, p4, p1 = g._pdef["p3"], g._pdef["p4"], g._pdef["p1"]
+        g.s.lineage = 100
+        self.assertFalse(g.buy_perk(p3))                    # needs p1
+        m0 = g.global_mult()
+        self.assertTrue(g.buy_perk(p4))
+        self.assertAlmostEqual(g.global_mult() / m0, 2.0)
+        self.assertFalse(g.buy_perk(p4))                    # single-buy
+        g.buy_perk(p1)
+        self.assertTrue(g.buy_perk(p3))
+        self.assertTrue(g.has_auto_exit())
+
+    def test_endless_perk_levels_cost_more(self):
+        g = fresh()
+        pn = g._pdef["pn"]
+        g.s.lineage = 1000
+        c0 = g.perk_cost(pn)
+        g.buy_perk(pn)
+        self.assertGreater(g.perk_cost(pn), c0)
+        self.assertEqual(g.s.perk_levels["pn"], 1)
+
+    def test_retainer_exits_when_worth_it(self):
+        g = fresh()
+        g.s.perks = ["p1", "p3"]
+        g.s.settings["auto_exit"] = True
+        g.s.lifetime_capital = 100 * 1e20
+        g.s.sov_earned = g.s.sov_raw = 0
+        g._slow_tick()
+        self.assertEqual(g.s.exits, 1)
+        g.s.settings["auto_exit"] = False
+        g.s.lifetime_capital = 1e30
+        g._slow_tick()
+        self.assertEqual(g.s.exits, 1)
+
+
+class AgesTests(unittest.TestCase):
+    def test_offer_arrives_on_schedule_and_commission_runs_in_real_time(self):
+        g, clk = timed()
+        g._slow_tick()
+        self.assertEqual(g.s.ages["offers"], [])
+        clk.t += 2 * 3600 + 1
+        g._slow_tick()
+        self.assertEqual(len(g.s.ages["offers"]), 1)
+        g.s.capital = 1e12
+        self.assertTrue(g.start_age(0, 0))
+        run = g.s.ages["running"][0]
+        self.assertEqual(g.claim_age(0), "")                # not ready: cannot be rushed
+        clk.t += g.age_def(run["id"])["hours"] * 3600 + 1
+        before = g.s.lineage
+        self.assertTrue(g.claim_age(0))
+        self.assertGreater(g.s.lineage + g.s.legacy * 100 + len(g.s.buffs) + g.s.capital, before)
+        self.assertEqual(g.s.ages_done, 1)
+
+    def test_unaffordable_or_full_slots_refuse(self):
+        g, clk = timed()
+        clk.t += 3 * 3600
+        g._slow_tick()
+        g.s.capital = 0
+        self.assertFalse(g.start_age(0, 0))
+        g.s.capital = 1e15
+        g.s.ages["running"] = [{"id": "x", "choice": 0, "ends": clk.t + 1}] * 2
+        self.assertFalse(g.start_age(0, 0))
+
+    def test_offers_lapse_and_are_capped(self):
+        g, clk = timed()
+        for _ in range(8):
+            clk.t += 21 * 3600
+            g._slow_tick()
+        self.assertLessEqual(len(g.s.ages["offers"]), 3)
+        clk.t += 30 * 86400
+        g._slow_tick()
+        self.assertTrue(all(o["expires"] > clk.t for o in g.s.ages["offers"]))
+
+    def test_age_buffs_survive_torpor(self):
+        g, _ = timed()
+        g.s.buffs = [{"name": "A Wedding in Three Acts", "mult": 3.0, "left": 100}, {"name": "event", "mult": 2, "left": 9}]
+        g.do_exit(force=True)
+        self.assertEqual([b["name"] for b in g.s.buffs], ["A Wedding in Three Acts"])
+
+
+class HuntTests(unittest.TestCase):
+    def test_daily_hunt_rule_goal_reward_and_rollover(self):
+        g, clk = timed()
+        g._slow_tick()
+        d = g.hunt_def("daily")
+        self.assertTrue(g.accept_hunt("daily"))
+        self.assertFalse(g.accept_hunt("weekly"))           # one at a time
+        for goal in d["goals"]:
+            g.s.ventures[goal["venture"] - 1].owned = goal["units"]
+        g._slow_tick()
+        self.assertEqual(g.s.hunts_done, 1)
+        self.assertEqual(g.s.lineage, 1)
+        self.assertTrue(g.hunt_done("daily"))
+        self.assertFalse(g.can_accept_hunt("daily"))
+        clk.t += 86400
+        g._slow_tick()
+        self.assertFalse(g.hunt_done("daily"))
+
+    def test_cannot_accept_when_already_past_the_goals(self):
+        g, _ = timed()
+        for goal in g.hunt_def("daily")["goals"]:
+            g.s.ventures[goal["venture"] - 1].owned = goal["units"]
+        self.assertFalse(g.can_accept_hunt("daily"))
+
+    def test_rules_bind(self):
+        g, _ = timed()
+        up = next(u for u in C.upgrades if u.currency == "capital" and u.kind == "venture")
+        g.s.revealed = 20
+        g.s.ventures[up.target].owned = 1
+        g.s.ventures[0].owned = 1
+        g.s.capital = 1e30
+        g.s.momentum = 50
+        self.assertTrue(g.can_buy_upgrade(up) and g.can_hire(0) and g.momentum_mult() > 1.0)
+        base_target = g.heat_target()
+        for rule in ("no_rites", "no_thralls", "no_frenzy", "fevered"):
+            g.hunt_rule = lambda r=rule: r
+            self.assertEqual(g.can_buy_upgrade(up), rule != "no_rites")
+            self.assertEqual(g.can_hire(0), rule != "no_thralls")
+            self.assertEqual(g.momentum_mult() == 1.0, rule == "no_frenzy")
+            self.assertEqual(g.heat_target() > base_target, rule == "fevered")
+
+
+class AnnalsTests(unittest.TestCase):
+    def test_feat_awards_bonus_once(self):
+        g = fresh()
+        g.s.exits = 1
+        g._annals_tick()
+        g._annals_tick()
+        self.assertEqual(g.s.feats.count("f01"), 1)
+        self.assertAlmostEqual(g.annals_mult(), 1.0 + 0.02 * len(g.s.feats))
+
+    def test_peaks_persist_after_reset(self):
+        g = fresh()
+        g.s.lifetime_capital = 1e40
+        g._annals_tick()
+        g.s.lifetime_capital = 0
+        self.assertGreaterEqual(g.annal_stat("maxlog"), 40)
+
+    def test_titles_climb(self):
+        g = fresh()
+        self.assertEqual(g.title(), "Fledgling")
+        g.s.feats = [f["id"] for f in C.feats[:12]]
+        self.assertEqual(g.title(), "Predator")
+
+    def test_content_consistent(self):
+        stats = {"exits", "play_hours", "clicks", "maxlog", "tier", "units_total", "dossiers", "events_seen",
+                 "machine_level", "endless_levels", "dynasties", "lineage_earned", "ages_done", "hunts_done"}
+        self.assertTrue(all(f["stat"] in stats for f in C.feats))
+        self.assertEqual(len({f["id"] for f in C.feats}), len(C.feats))
+        for h in C.hunts + C.weeklies:
+            self.assertIn(h["rule"], {"no_rites", "no_thralls", "no_frenzy", "fevered"})
+            self.assertTrue(all(1 <= g["venture"] <= 20 for g in h["goals"]))
+        for a in C.ages:
+            self.assertEqual(len(a["choice"]), 2)

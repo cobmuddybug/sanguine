@@ -3,6 +3,10 @@
 #               tier_mult (product, tiers tier_from..tier_to, 1-based) | momentum_cap (sum) |
 #               momentum_grace (sum) | momentum_bonus (sum) | reveal (sum) |
 #               proxy_discount (max) | unit_discount (max)
+# [[endless]]: repeatable sinks, cost = base_cost * growth^level, capped at max_level.
+#               effect kinds: all_mult (value^level) | offline_cap (+value hours per level) |
+#               sov_gain (+value per level, fraction of every TORPOR award) | momentum_cap (+value per level) |
+#               tier_mult (value^level on tiers tier_from..tier_to)
 
 [[branch]]
 id = "exit"
@@ -206,3 +210,54 @@ requires = "a5"
 effect = "momentum_cap"
 value = 50
 extra_momentum_bonus = 0.005
+
+# ---- ENDLESS RITES: Potency sinks that never finish ------------------------------
+[[endless]]
+id = "n1"
+name = "Dynastic Appetite"
+desc = "All output x1.04 per level."
+effect = "all_mult"
+value = 1.04
+base_cost = 2000
+growth = 1.5
+
+[[endless]]
+id = "n2"
+name = "The Long Coffin"
+desc = "Offline cap +1 hour per level (base 8h)."
+effect = "offline_cap"
+value = 1
+base_cost = 5000
+growth = 1.6
+max_level = 16
+
+[[endless]]
+id = "n3"
+name = "Blood Tithe"
+desc = "Every TORPOR awards +3% more Potency per level."
+effect = "sov_gain"
+value = 0.03
+base_cost = 30000
+growth = 1.45
+max_level = 40
+
+[[endless]]
+id = "n4"
+name = "Fevered Dynasty"
+desc = "Momentum cap +10 per level."
+effect = "momentum_cap"
+value = 10
+base_cost = 3000
+growth = 1.5
+max_level = 25
+
+[[endless]]
+id = "n5"
+name = "Hunger of the Below"
+desc = "Domains 21-30 output x1.06 per level (opens with the Compact)."
+effect = "tier_mult"
+tier_from = 21
+tier_to = 30
+value = 1.06
+base_cost = 8000
+growth = 1.5

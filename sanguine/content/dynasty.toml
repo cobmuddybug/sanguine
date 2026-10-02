@@ -1,0 +1,92 @@
+# Dynasty: the second prestige. Perks are bought with Lineage and survive every Dynasty.
+# effect kinds: all_mult (product) | tier_mult (product, tiers tier_from..tier_to, 1-based) | keep_tree_cost (max:
+#   Bloodline nodes costing <= value survive a Dynasty) | offline_cap (sum, hours) | sov_gain (sum, fraction) |
+#   lineage_gain (sum, fraction) | auto_exit (flag: the Retainer sleeps for you) | momentum_cap (sum)
+# An entry with `endless = true` is repeatable: cost = cost * growth^level, effect applies value^level.
+
+[[perk]]
+id = "p1"
+name = "Heirloom Bloodline"
+desc = "The cheap Bloodline awakenings (cost 20 or less) survive every Dynasty."
+cost = 2
+effect = "keep_tree_cost"
+value = 20
+
+[[perk]]
+id = "p2"
+name = "Inherited Sleep"
+desc = "Offline cap +8 hours."
+cost = 4
+effect = "offline_cap"
+value = 8
+
+[[perk]]
+id = "p3"
+name = "The Quiet Retainer"
+desc = "A servant who enters Torpor for you when it is clearly worth it. Toggle it here."
+cost = 6
+requires = "p1"
+effect = "auto_exit"
+value = 1
+
+[[perk]]
+id = "p4"
+name = "Primogeniture"
+desc = "All output x2."
+cost = 8
+effect = "all_mult"
+value = 2
+
+[[perk]]
+id = "p5"
+name = "The Whole Bloodline Endures"
+desc = "Every Bloodline awakening survives every Dynasty."
+cost = 10
+requires = "p1"
+effect = "keep_tree_cost"
+value = 1000
+
+[[perk]]
+id = "p6"
+name = "Court of Ghosts"
+desc = "Dynasties award 25% more Lineage."
+cost = 14
+effect = "lineage_gain"
+value = 0.25
+
+[[perk]]
+id = "p7"
+name = "The Below, Inherited"
+desc = "Domains 21-30 output x5."
+cost = 18
+effect = "tier_mult"
+tier_from = 21
+tier_to = 30
+value = 5
+
+[[perk]]
+id = "p8"
+name = "Deeper Coffers"
+desc = "Every Torpor awards 50% more Potency."
+cost = 22
+effect = "sov_gain"
+value = 0.5
+
+[[perk]]
+id = "p9"
+name = "Dynasty Eternal"
+desc = "All output x3."
+cost = 36
+requires = "p4"
+effect = "all_mult"
+value = 3
+
+[[perk]]
+id = "pn"
+name = "Compounding Lineage"
+desc = "All output x1.25 per level."
+cost = 40
+growth = 1.6
+endless = true
+effect = "all_mult"
+value = 1.25

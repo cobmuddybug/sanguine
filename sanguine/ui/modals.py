@@ -85,7 +85,7 @@ class ChoiceModal(ModalScreen[int | None]):
 
 
 class QuietScreen(ModalScreen[None]):
-    """The final screen. Nearly nothing. It waits, and then it lets you go."""
+    """A pause at the end of a chapter. Nearly nothing. It waits, and then it lets you go on."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -96,7 +96,7 @@ class QuietScreen(ModalScreen[None]):
 
     def on_mount(self) -> None:
         self.set_timer(2.5, lambda: self._say("it is fed."))
-        self.set_timer(7.0, lambda: self._say("it is fed.\n\nnothing is required of you."))
+        self.set_timer(7.0, lambda: self._say("it is fed.\n\nnothing is required of you. yet."))
         self.set_timer(11.0, self._arm)
 
     def _say(self, text: str) -> None:
@@ -104,7 +104,7 @@ class QuietScreen(ModalScreen[None]):
 
     def _arm(self) -> None:
         self._ready = True
-        self._say("it is fed.\n\nnothing is required of you.\n\n\n· press any key ·")
+        self._say("it is fed.\n\nnothing is required of you. yet.\n\n\n· press any key ·")
 
     def on_key(self, event: events.Key) -> None:
         event.stop()

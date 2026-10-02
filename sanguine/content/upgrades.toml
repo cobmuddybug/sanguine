@@ -837,6 +837,17 @@ desc = "Throne of a Thousand Sighs output x3."
 flavour = "The numbers went up. So did the temperature."
 
 [[upgrade]]
+id = "u21_1"
+name = "Stamped in Triplicate"
+kind = "venture"
+target = 20
+mult = 3.0
+cost = 3.47e+25
+currency = "capital"
+desc = "Hellmouth Tithe Office output x3."
+flavour = "Marginal gains, but they linger."
+
+[[upgrade]]
 id = "u18_3"
 name = "The Kneeling Moon"
 kind = "venture"
@@ -857,6 +868,17 @@ cost = 2.78e+26
 currency = "capital"
 desc = "The Gate of Perdition output x3."
 flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u22_1"
+name = "Margin Call on Mourning"
+kind = "venture"
+target = 21
+mult = 3.0
+cost = 4.34e+26
+currency = "capital"
+desc = "Exchange of Lamentations output x3."
+flavour = "Marginal gains, but they linger."
 
 [[upgrade]]
 id = "ug_8"
@@ -881,6 +903,28 @@ desc = "Throne of a Thousand Sighs output x5."
 flavour = "Approved unanimously by everyone present, and some who were not."
 
 [[upgrade]]
+id = "u21_2"
+name = "Backdated Damnation"
+kind = "venture"
+target = 20
+mult = 3.0
+cost = 3.47e+27
+currency = "capital"
+desc = "Hellmouth Tithe Office output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u23_1"
+name = "Sharper Pews"
+kind = "venture"
+target = 22
+mult = 3.0
+cost = 5.42e+27
+currency = "capital"
+desc = "Cathedral of Teeth output x3."
+flavour = "Marginal gains, but they linger."
+
+[[upgrade]]
 id = "u20_3"
 name = "The Gate Reciprocates"
 kind = "venture"
@@ -890,4 +934,323 @@ cost = 2.78e+28
 currency = "capital"
 desc = "The Gate of Perdition output x5."
 flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u22_2"
+name = "Short the Faithful"
+kind = "venture"
+target = 21
+mult = 3.0
+cost = 4.34e+28
+currency = "capital"
+desc = "Exchange of Lamentations output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u24_1"
+name = "Amendment by Incision"
+kind = "venture"
+target = 23
+mult = 3.0
+cost = 6.78e+28
+currency = "capital"
+desc = "Parliament of Wounds output x3."
+flavour = "Marginal gains, but they linger."
+
+[[upgrade]]
+id = "u21_3"
+name = "Audit of the Soul"
+kind = "venture"
+target = 20
+mult = 5.0
+cost = 3.47e+29
+currency = "capital"
+desc = "Hellmouth Tithe Office output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u23_2"
+name = "Responsorial Bite"
+kind = "venture"
+target = 22
+mult = 3.0
+cost = 5.42e+29
+currency = "capital"
+desc = "Cathedral of Teeth output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u25_1"
+name = "Grafted Mercy"
+kind = "venture"
+target = 24
+mult = 3.0
+cost = 8.47e+29
+currency = "capital"
+desc = "Orchard of Hanged Saints output x3."
+flavour = "Marginal gains, but they linger."
+
+[[upgrade]]
+id = "u22_3"
+name = "Bull Market in Grief"
+kind = "venture"
+target = 21
+mult = 5.0
+cost = 4.34e+30
+currency = "capital"
+desc = "Exchange of Lamentations output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u24_2"
+name = "Quorum of the Bleeding"
+kind = "venture"
+target = 23
+mult = 3.0
+cost = 6.78e+30
+currency = "capital"
+desc = "Parliament of Wounds output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u26_1"
+name = "Names in Advance"
+kind = "venture"
+target = 25
+mult = 3.0
+cost = 1.06e+31
+currency = "capital"
+desc = "Registry of the Unborn output x3."
+flavour = "Marginal gains, but they linger."
+
+[[upgrade]]
+id = "u23_3"
+name = "Hymn in the Throat"
+kind = "venture"
+target = 22
+mult = 5.0
+cost = 5.42e+31
+currency = "capital"
+desc = "Cathedral of Teeth output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u25_2"
+name = "Hanging Season"
+kind = "venture"
+target = 24
+mult = 3.0
+cost = 8.47e+31
+currency = "capital"
+desc = "Orchard of Hanged Saints output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "ug_9"
+name = "Hell Takes Notes"
+kind = "global"
+target = -1
+mult = 5.0
+cost = 1e+32
+currency = "capital"
+desc = "ALL output x5."
+flavour = "Every move you make is minuted, and then copied."
+
+[[upgrade]]
+id = "u27_1"
+name = "Polished Glass"
+kind = "venture"
+target = 26
+mult = 3.0
+cost = 1.32e+32
+currency = "capital"
+desc = "The Mirror Court output x3."
+flavour = "Marginal gains, but they linger."
+
+[[upgrade]]
+id = "u24_3"
+name = "Filibuster of Veins"
+kind = "venture"
+target = 23
+mult = 5.0
+cost = 6.78e+32
+currency = "capital"
+desc = "Parliament of Wounds output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u26_2"
+name = "Debt Before Birth"
+kind = "venture"
+target = 25
+mult = 3.0
+cost = 1.06e+33
+currency = "capital"
+desc = "Registry of the Unborn output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u28_1"
+name = "Deeper Water"
+kind = "venture"
+target = 27
+mult = 3.0
+cost = 1.65e+33
+currency = "capital"
+desc = "Reservoir of the Long Night output x3."
+flavour = "Marginal gains, but they linger."
+
+[[upgrade]]
+id = "u25_3"
+name = "Harvest Without End"
+kind = "venture"
+target = 24
+mult = 5.0
+cost = 8.47e+33
+currency = "capital"
+desc = "Orchard of Hanged Saints output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u27_2"
+name = "Reflections Take Meetings"
+kind = "venture"
+target = 26
+mult = 3.0
+cost = 1.32e+34
+currency = "capital"
+desc = "The Mirror Court output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u29_1"
+name = "Heavier Sheets"
+kind = "venture"
+target = 28
+mult = 3.0
+cost = 2.07e+34
+currency = "capital"
+desc = "Bed of the Last Empire output x3."
+flavour = "Marginal gains, but they linger."
+
+[[upgrade]]
+id = "u26_3"
+name = "Lien on the Cradle"
+kind = "venture"
+target = 25
+mult = 5.0
+cost = 1.06e+35
+currency = "capital"
+desc = "Registry of the Unborn output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u28_2"
+name = "Undertow of Wanting"
+kind = "venture"
+target = 27
+mult = 3.0
+cost = 1.65e+35
+currency = "capital"
+desc = "Reservoir of the Long Night output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u30_1"
+name = "Rings Exchanged"
+kind = "venture"
+target = 29
+mult = 3.0
+cost = 2.58e+35
+currency = "capital"
+desc = "The Consummation output x3."
+flavour = "Marginal gains, but they linger."
+
+[[upgrade]]
+id = "ug_10"
+name = "The Ledger Reads Back"
+kind = "global"
+target = -1
+mult = 5.0
+cost = 1e+36
+currency = "capital"
+desc = "ALL output x5."
+flavour = "It has opinions about your handwriting. It has begun to flirt."
+
+[[upgrade]]
+id = "u27_3"
+name = "The Glass Rules"
+kind = "venture"
+target = 26
+mult = 5.0
+cost = 1.32e+36
+currency = "capital"
+desc = "The Mirror Court output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u29_2"
+name = "Border of Pillows"
+kind = "venture"
+target = 28
+mult = 3.0
+cost = 2.07e+36
+currency = "capital"
+desc = "Bed of the Last Empire output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u28_3"
+name = "The Lake Rises"
+kind = "venture"
+target = 27
+mult = 5.0
+cost = 1.65e+37
+currency = "capital"
+desc = "Reservoir of the Long Night output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u30_2"
+name = "Vows in Advance"
+kind = "venture"
+target = 29
+mult = 3.0
+cost = 2.58e+37
+currency = "capital"
+desc = "The Consummation output x3."
+flavour = "The numbers went up. So did the temperature."
+
+[[upgrade]]
+id = "u29_3"
+name = "Empire Under Covers"
+kind = "venture"
+target = 28
+mult = 5.0
+cost = 2.07e+38
+currency = "capital"
+desc = "Bed of the Last Empire output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "u30_3"
+name = "It Is Done"
+kind = "venture"
+target = 29
+mult = 5.0
+cost = 2.58e+39
+currency = "capital"
+desc = "The Consummation output x5."
+flavour = "Approved unanimously by everyone present, and some who were not."
+
+[[upgrade]]
+id = "ug_11"
+name = "Marriage Settlement"
+kind = "global"
+target = -1
+mult = 5.0
+cost = 1e+40
+currency = "capital"
+desc = "ALL output x5."
+flavour = "Everything you own, in joint names. Nobody remembers the other name."
 

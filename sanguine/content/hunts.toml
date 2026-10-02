@@ -1,0 +1,87 @@
+# Hunts: daily and weekly trials. Accept one while you are still short of its goals, obey the rule, finish before
+# the day (UTC) or week ends. Rules: no_rites | no_thralls | no_frenzy | fevered (the Inquisition runs hot).
+# goals: venture is 1-based, units is how many you must hold.
+
+[[hunt]]
+id = "h1"
+name = "Bare Hands"
+blurb = "Build a household without a single Rite."
+rule = "no_rites"
+goals = [{ venture = 2, units = 50 }, { venture = 4, units = 25 }]
+
+[[hunt]]
+id = "h2"
+name = "No Servants"
+blurb = "Do it yourself. No Thralls may be bound."
+rule = "no_thralls"
+goals = [{ venture = 3, units = 40 }, { venture = 5, units = 20 }]
+
+[[hunt]]
+id = "h3"
+name = "Sober Frenzy"
+blurb = "Hunt without Frenzy. Calm, and a little cruel."
+rule = "no_frenzy"
+goals = [{ venture = 4, units = 50 }, { venture = 6, units = 25 }]
+
+[[hunt]]
+id = "h4"
+name = "Fevered"
+blurb = "The Inquisition runs hot tonight."
+rule = "fevered"
+goals = [{ venture = 5, units = 50 }, { venture = 7, units = 25 }]
+
+[[hunt]]
+id = "h5"
+name = "Bare Hands, Bigger Mouth"
+blurb = "No Rites, higher ambition."
+rule = "no_rites"
+goals = [{ venture = 6, units = 40 }, { venture = 8, units = 25 }]
+
+[[hunt]]
+id = "h6"
+name = "A Quiet House"
+blurb = "No Thralls, no Frenzy: only you, and the dark."
+rule = "no_thralls"
+goals = [{ venture = 2, units = 100 }, { venture = 7, units = 25 }]
+
+[[hunt]]
+id = "h7"
+name = "Narrow Appetite"
+blurb = "A thin menu, eaten quickly."
+rule = "no_frenzy"
+goals = [{ venture = 3, units = 100 }, { venture = 9, units = 25 }]
+
+[[hunt]]
+id = "h8"
+name = "The Long Fever"
+blurb = "Stay hot and stay hungry."
+rule = "fevered"
+goals = [{ venture = 6, units = 50 }, { venture = 9, units = 25 }]
+
+[[weekly]]
+id = "w1"
+name = "Week of Bare Hands"
+blurb = "A week-long vow: no Rites. Climb far without them."
+rule = "no_rites"
+goals = [{ venture = 8, units = 50 }, { venture = 11, units = 25 }, { venture = 13, units = 10 }]
+
+[[weekly]]
+id = "w2"
+name = "Week of Silence"
+blurb = "No Thralls for seven days. Everything by hand."
+rule = "no_thralls"
+goals = [{ venture = 7, units = 75 }, { venture = 10, units = 25 }, { venture = 12, units = 10 }]
+
+[[weekly]]
+id = "w3"
+name = "Week of Fever"
+blurb = "The Inquisition has your scent. Run, and run hot."
+rule = "fevered"
+goals = [{ venture = 9, units = 50 }, { venture = 12, units = 25 }, { venture = 14, units = 10 }]
+
+[[weekly]]
+id = "w4"
+name = "Week Without Mercy"
+blurb = "No Frenzy to carry you. Only craft."
+rule = "no_frenzy"
+goals = [{ venture = 10, units = 50 }, { venture = 13, units = 25 }, { venture = 15, units = 10 }]

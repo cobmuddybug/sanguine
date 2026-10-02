@@ -57,6 +57,13 @@ class Content:
     dossiers: list[dict] = field(default_factory=list)
     branches: list[dict] = field(default_factory=list)
     nodes: list[dict] = field(default_factory=list)
+    endless: list[dict] = field(default_factory=list)
+    perks: list[dict] = field(default_factory=list)
+    ages: list[dict] = field(default_factory=list)
+    hunts: list[dict] = field(default_factory=list)
+    weeklies: list[dict] = field(default_factory=list)
+    feats: list[dict] = field(default_factory=list)
+    titles: list[dict] = field(default_factory=list)
     headlines: dict = field(default_factory=dict)
     extra: dict = field(default_factory=dict)  # other loaded tables, keyed by file stem
 
@@ -89,4 +96,11 @@ def load_content() -> Content:
     content.dossiers = _load("dossiers.toml")["dossier"]
     tree = _load("sovereignty.toml")
     content.branches, content.nodes = tree["branch"], tree["node"]
+    content.endless = tree.get("endless", [])
+    content.perks = _load("dynasty.toml")["perk"]
+    content.ages = _load("ages.toml")["age"]
+    hunts = _load("hunts.toml")
+    content.hunts, content.weeklies = hunts["hunt"], hunts["weekly"]
+    annals = _load("annals.toml")
+    content.feats, content.titles = annals["feat"], annals["title"]
     return content

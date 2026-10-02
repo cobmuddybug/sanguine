@@ -24,6 +24,16 @@ NAMES = [
  ("Tidal Gearing", "Eclipse Season", "The Kneeling Moon"),
  ("A Higher Dais", "Litany of Sighs", "Throne Warm From Below"),
  ("Hinges Oiled With Prayer", "Threshold Toll", "The Gate Reciprocates"),
+ ("Stamped in Triplicate", "Backdated Damnation", "Audit of the Soul"),
+ ("Margin Call on Mourning", "Short the Faithful", "Bull Market in Grief"),
+ ("Sharper Pews", "Responsorial Bite", "Hymn in the Throat"),
+ ("Amendment by Incision", "Quorum of the Bleeding", "Filibuster of Veins"),
+ ("Grafted Mercy", "Hanging Season", "Harvest Without End"),
+ ("Names in Advance", "Debt Before Birth", "Lien on the Cradle"),
+ ("Polished Glass", "Reflections Take Meetings", "The Glass Rules"),
+ ("Deeper Water", "Undertow of Wanting", "The Lake Rises"),
+ ("Heavier Sheets", "Border of Pillows", "Empire Under Covers"),
+ ("Rings Exchanged", "Vows in Advance", "It Is Done"),
 ]
 TIERS = [(1e3, 3), (1e5, 3), (1e7, 5)]
 GLOBAL = [
@@ -35,6 +45,9 @@ GLOBAL = [
  ("Sovereign Appetite", 1e21, 3, "You feed at a rate you set."),
  ("Crimson Line Item", 1e24, 5, "A budget that writes its own devotion."),
  ("Hell Recognises Its Own", 1e27, 5, "It has read the ledger. It approves. It purrs."),
+ ("Hell Takes Notes", 1e32, 5, "Every move you make is minuted, and then copied."),
+ ("The Ledger Reads Back", 1e36, 5, "It has opinions about your handwriting. It has begun to flirt."),
+ ("Marriage Settlement", 1e40, 5, "Everything you own, in joint names. Nobody remembers the other name."),
 ]
 
 LAUNDER = [

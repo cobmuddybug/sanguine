@@ -13,24 +13,25 @@ from textual.widgets import RichLog, Static, TabbedContent, TabPane, Tabs
 
 from ..engine.bignum import duration, fmt, money
 from ..engine.content import Content, load_content
-from ..engine.game import OFFLINE_CAP, Game
+from ..engine.game import Game
 from ..engine.persistence import load_game, reset_save, save_game
 from ..engine.state import BULK_MODES, GameState
 from .corkboard import Corkboard
+from .ledger import LedgerRow, RowView
 from . import voice
 from .modals import ChoiceModal, QuietScreen, TextModal
 from .theme import css_text
 from .widgets import AMBER, DIM, GREEN, RED, ActionButton, BulkBar, CycleBar, LogView, Scroller
 
-TABS = ["ventures", "proxies", "upgrades", "corkboard", "sovereignty", "log"]
+TABS = ["ventures", "proxies", "upgrades", "corkboard", "sovereignty", "dynasty", "ages", "annals", "log"]
 TAB_TITLES = {"ventures": "Domains", "proxies": "Thralls", "upgrades": "Rites", "corkboard": "Court",
-              "sovereignty": "Bloodline", "log": "Chronicle"}
-LIST_TABS = ("ventures", "proxies", "upgrades", "sovereignty")
+              "sovereignty": "Bloodline", "dynasty": "Dynasty", "ages": "Ages", "annals": "Annals", "log": "Chronicle"}
+LIST_TABS = ("ventures", "proxies", "upgrades", "sovereignty", "dynasty", "ages", "annals")
 DIGIT_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
               "exclamation_mark", "at", "number_sign", "dollar_sign", "percent_sign",
               "circumflex_accent", "ampersand", "asterisk", "left_parenthesis", "right_parenthesis"]
 KEY_LABELS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
-              "⇧1", "⇧2", "⇧3", "⇧4", "⇧5", "⇧6", "⇧7", "⇧8", "⇧9", "⇧0"]
+              "⇧1", "⇧2", "⇧3", "⇧4", "⇧5", "⇧6", "⇧7", "⇧8", "⇧9", "⇧0"] + ["·"] * 10   # the Below: j/k only
 
 HELP = """\
 MOUSE
@@ -71,7 +72,7 @@ STAT_HELP = {
     "heat": ("INQUISITION", "Attention from the hunters. Rises with your income. Above 75 output is penalised; "
                             "at 100 the Inquisitors call. Veils and glamours lower it."),
     "sovereignty": ("POTENCY", "Permanent currency earned by TORPOR (sqrt of lifetime Blood). Spend it in the "
-                               "Bloodline; every point ever earned also adds +1% output."),
+                               "Bloodline; every point ever earned also lifts all output (with diminishing returns)."),
 }
 
 
@@ -150,7 +151,7 @@ class VentureRow(Horizontal):
     def update(self, selected: bool) -> None:
         g, i = self.game, self.idx
         s = g.s
-        show = i < s.revealed + 2
+        show = i < min(s.revealed + 2, g.n_active())
         if self.display != show:
             self.display = show
         if not show:
@@ -310,9 +311,10 @@ class UpgradeRow(Horizontal):
 
 
 class NodeRow(Horizontal):
-    def __init__(self, node: dict) -> None:
+    def __init__(self, node: dict, endless: bool = False) -> None:
         super().__init__(classes="nrow")
         self.n = node
+        self.endless = endless
 
     def compose(self) -> ComposeResult:
         yield Static("", classes="n-name")
@@ -339,6 +341,8 @@ class NodeRow(Horizontal):
 
     def state(self) -> str:
         g, n = self.game, self.n
+        if self.endless:
+            return "owned" if g.endless_maxed(n) else "open"
         if g.node_owned(n["id"]):
             return "owned"
         return "open" if g.node_available(n) else "locked"
@@ -348,6 +352,14 @@ class NodeRow(Horizontal):
         t = Text()
         t.append(f"{n['name']}\n", style=f"bold {GREEN}")
         t.append(f"{n['desc']}\n")
+        if self.endless:
+            t.append(f"Level {g.endless_level(n['id'])}" + (f" / {n['max_level']}" if "max_level" in n else "") + "\n", style=DIM)
+            if g.endless_maxed(n):
+                t.append("Maxed.", style=GREEN)
+                return t
+            t.append(f"Cost {fmt(g.endless_cost(n))} Potency  ·  you have {fmt(g.s.sovereignty)}",
+                     style=GREEN if g.can_buy_endless(n) else RED)
+            return t
         t.append(f"Cost {n['cost']} Potency  ·  you have {fmt(g.s.sovereignty)}\n",
                  style=GREEN if g.s.sovereignty >= n["cost"] else RED)
         st = self.state()
@@ -362,10 +374,20 @@ class NodeRow(Horizontal):
         self.set_class(selected, "-selected")
         st = self.state()
         self.set_class(st == "locked", "-locked")
+        lvl = f"  [{g.endless_level(n['id'])}]" if self.endless else ""
         self.query_one(".n-name", Static).update(Text.assemble(
-            (f" {n['name']}\n", f"bold {GREEN}" if st == "owned" else ("bold" if st == "open" else DIM)),
+            (f" {n['name']}{lvl}\n", f"bold {GREEN}" if st == "owned" else ("bold" if st == "open" else DIM)),
             (f" {n['desc']}", DIM)))
         btn = self.query_one(".n-btn", ActionButton)
+        if self.endless:
+            if st == "owned":
+                btn.update(Text.assemble(("MAXED\n", f"bold {GREEN}"), ("✓", GREEN)))
+                btn.set_disabled_look(True)
+            else:
+                btn.update(Text.assemble(("DEEPEN" + (" [⏎]" if selected else "") + "\n", "bold"),
+                                         (f"{fmt(g.endless_cost(n))} POT", "")))
+                btn.set_disabled_look(not g.can_buy_endless(n))
+            return
         if st == "owned":
             btn.update(Text.assemble(("OWNED\n", f"bold {GREEN}"), ("✓", GREEN)))
             btn.set_disabled_look(True)
@@ -457,6 +479,30 @@ class SanguineApp(App):
                                 for n in self.content.nodes:
                                     if n["branch"] == br["id"]:
                                         yield NodeRow(n)
+                        if self.content.endless:
+                            with Vertical(classes="branch"):
+                                yield Static(Text.assemble(("ENDLESS RITES\n", f"bold {RED}"),
+                                                           ("There is always more to give, and always someone to give it to.", DIM)),
+                                             classes="branch-head")
+                                for e in self.content.endless:
+                                    yield NodeRow(e, endless=True)
+                with TabPane(TAB_TITLES["dynasty"], id="dynasty"):
+                    with Horizontal(id="dynbar"):
+                        yield Static("", id="dyn-info")
+                        yield ActionButton("", action_id="dynasty", id="dyn-btn")
+                    with Scroller(id="dynlist"):
+                        for row in self._dynasty_rows():
+                            yield row
+                with TabPane(TAB_TITLES["ages"], id="ages"):
+                    yield Static("", id="age-info")
+                    with Scroller(id="agelist"):
+                        for row in self._ages_rows():
+                            yield row
+                with TabPane(TAB_TITLES["annals"], id="annals"):
+                    yield Static("", id="annal-info")
+                    with Scroller(id="annallist"):
+                        for row in self._annals_rows():
+                            yield row
                 with TabPane(TAB_TITLES["log"], id="log"):
                     yield LogView(id="logview", wrap=True, markup=False, highlight=False)
             yield InfoPane("", id="info")
@@ -477,11 +523,11 @@ class SanguineApp(App):
         self.refresh_ui()
         if self.offline_note:
             away, gain = self.offline_note
-            capped = min(away, OFFLINE_CAP)
+            capped = min(away, self.game.offline_cap())
             self.game.log(f"Away {duration(away)}: your thralls fed for you and earned {money(gain)}.")
             self.push_screen(TextModal(
                 "WHILE YOU SLEPT",
-                Text.assemble((f"{duration(away)} elapsed" + (" (capped at 8h)" if away > capped else "") + ".\n\n", ""),
+                Text.assemble((f"{duration(away)} elapsed" + (f" (capped at {duration(capped)})" if away > capped else "") + ".\n\n", ""),
                               ("Your Thralls kept the candles lit and earned ", ""), (money(gain), f"bold {GREEN}"),
                               (".\nNobody asked how. Nobody wanted to know.", DIM)), "COLLECT"))
 
@@ -557,6 +603,11 @@ class SanguineApp(App):
             for row in self.base.query(NodeRow):
                 row.update(row is chosen)
             self._refresh_exit_bar()
+        elif active in ("dynasty", "ages", "annals"):
+            chosen = vis[sel] if vis else None
+            for row in self.base.query(f"#{active} LedgerRow"):
+                row.update(row is chosen)
+            self._refresh_ledger_header(active)
         elif active in ("proxies", "upgrades"):
             cls = ProxyRow if active == "proxies" else UpgradeRow
             chosen = vis[sel] if vis else None
@@ -576,12 +627,205 @@ class SanguineApp(App):
         for tid, title in TAB_TITLES.items():
             tc.get_tab(tid).label = voice.tab(title, level)
 
+    # -- Dynasty / Ages / Annals ----------------------------------------------
+    RULE_TEXT = {"no_rites": "no Rites may be invoked", "no_thralls": "no Thralls may be bound",
+                 "no_frenzy": "Frenzy gives no bonus", "fevered": "the Inquisition runs 50% hotter"}
+
+    def _dynasty_rows(self) -> list:
+        g = lambda: self.game  # noqa: E731  (the game object is swapped on save reset)
+        rows = []
+        for p in self.content.perks:
+            def view(p=p) -> RowView:
+                game = g()
+                owned, avail = game.perk_owned(p), game.perk_available(p)
+                lvl = game.perk_level(p["id"]) if p.get("endless") else 0
+                cost = game.perk_cost(p)
+                state = "owned" if owned else ("open" if avail else "locked")
+                info = Text.assemble((p["name"] + "\n", f"bold {GREEN}"), (p["desc"] + "\n", ""),
+                                     (f"Cost {fmt(cost)} Lineage  ·  you have {fmt(game.s.lineage)}", GREEN if game.s.lineage >= cost else RED))
+                if state == "locked":
+                    info.append(f"\nRequires: {game._pdef[p['requires']]['name']}", style=DIM)
+                label = "OWNED" if owned else ("LOCKED" if not avail else ("DEEPEN" if p.get("endless") else "BESTOW"))
+                return RowView(p["name"] + (f"  [{lvl}]" if p.get("endless") else ""), p["desc"], label,
+                               "✓" if owned else f"{fmt(cost)} LIN", state, game.can_buy_perk(p), info)
+            rows.append(LedgerRow(view, lambda p=p: g().buy_perk(p)))
+
+        def retainer() -> RowView:
+            game = g()
+            on = game.auto_exit_on()
+            return RowView("The Quiet Retainer", "Enters Torpor for you once it has more than doubled your Potency.",
+                           "ON" if on else "OFF", "toggle", "open", True,
+                           Text("Toggle automatic Torpor. It waits for an incident to clear first.", style=DIM),
+                           show=game.has_auto_exit())
+        rows.append(LedgerRow(retainer, lambda: g().toggle_auto_exit()))
+        return rows
+
+    def _ages_rows(self) -> list:
+        g = lambda: self.game  # noqa: E731
+        rows = []
+        for kind in ("daily", "weekly"):
+            def view(kind=kind) -> RowView:
+                game = g()
+                h = game.hunt_def(kind)
+                active = game.hunt_active() is h
+                done = game.hunt_done(kind)
+                prog = "  ·  ".join(f"{n} {min(o, need)}/{need}" for n, o, need in game.hunt_goal_progress(h))
+                reward = 1 if kind == "daily" else 3
+                head = ("DAILY HUNT: " if kind == "daily" else "WEEKLY HUNT: ") + h["name"]
+                info = Text.assemble((head + "\n", f"bold {GREEN}"), (h["blurb"] + "\n", ""),
+                                     ("Rule: ", DIM), (self.RULE_TEXT[h["rule"]] + "\n", AMBER), ("Goals: ", DIM), (prog + "\n", ""),
+                                     (f"Reward: +{reward} Lineage. Accept it while you are short of every goal; "
+                                      "it ends when the " + ("day" if kind == "daily" else "week") + " does (UTC).", DIM))
+                if done:
+                    return RowView(head, "Complete. Another comes with the dawn." if kind == "daily" else "Complete.", "DONE", "✓", "owned", False, info)
+                if active:
+                    return RowView(head, f"{self.RULE_TEXT[h['rule']]}  ·  {prog}", "ABANDON", "in progress", "open", True, info)
+                return RowView(head, f"{self.RULE_TEXT[h['rule']]}  ·  {prog}", "ACCEPT", f"+{reward} LIN", "open",
+                               game.can_accept_hunt(kind), info)
+
+            def press(kind=kind) -> None:
+                game = g()
+                if game.hunt_active() is game.hunt_def(kind):
+                    game.abandon_hunt()
+                else:
+                    game.accept_hunt(kind)
+            rows.append(LedgerRow(view, press))
+
+        for i in range(2):
+            def rview(i=i) -> RowView:
+                game = g()
+                runs = game.s.ages.get("running", [])
+                if i >= len(runs):
+                    return RowView("", show=False)
+                run = runs[i]
+                a = game.age_def(run["id"])
+                ch = a["choice"][run["choice"]]
+                ready = game.age_ready(run)
+                info = Text.assemble((a["name"] + "\n", f"bold {GREEN}"), (a["blurb"] + "\n", ""),
+                                     ("Your choice: ", DIM), (f"{ch['label']}  ({ch['note']})", ""))
+                return RowView("IN PROGRESS: " + a["name"], f"{ch['label']}  ·  {ch['note']}",
+                               "CLAIM" if ready else "waiting", "ready" if ready else duration(game.age_remaining(run)),
+                               "open" if ready else "locked", ready, info)
+
+            def rpress(i=i) -> None:
+                text = g().claim_age(i)
+                if text:
+                    self.notify(text, title="AGE COMPLETE", timeout=10)
+            rows.append(LedgerRow(rview, rpress))
+
+        for i in range(3):
+            def oview(i=i) -> RowView:
+                game = g()
+                offers = game.s.ages.get("offers", [])
+                if i >= len(offers):
+                    return RowView("", show=False)
+                a = game.age_def(offers[i]["id"])
+                cost = game.age_cost(a)
+                info = Text.assemble((a["name"] + "\n", f"bold {GREEN}"), (a["blurb"] + "\n", ""),
+                                     ("Takes ", DIM), (duration(a["hours"] * 3600) + " of real time. ", ""), ("Commit ", DIM),
+                                     (money(cost) + "\n", GREEN if game.s.capital >= cost else RED))
+                for c in a["choice"]:
+                    info.append(f"  {c['label']}: {c['note']}\n", style=DIM)
+                return RowView("OFFER: " + a["name"], a["blurb"], "BEGIN", money(cost), "open", game.can_start_age(offers[i]), info)
+            rows.append(LedgerRow(oview, lambda i=i: self.do_begin_age(i)))
+        return rows
+
+    def _annals_rows(self) -> list:
+        g = lambda: self.game  # noqa: E731
+        rows = []
+        for f in self.content.feats:
+            def view(f=f) -> RowView:
+                game = g()
+                done = game.feat_done(f)
+                cur, need = game.feat_progress(f)
+                info = Text.assemble((f["name"] + "\n", f"bold {GREEN}" if done else "bold"), (f["desc"] + "\n", ""),
+                                     ("+2% output once inscribed." if not done else "Inscribed. +2% output.", DIM))
+                return RowView(f["name"], f["desc"], "✓" if done else "·", "" if done else f"{fmt(cur)}/{fmt(need)}",
+                               "owned" if done else "info", False, info)
+            rows.append(LedgerRow(view))
+        return rows
+
+    def do_begin_age(self, idx: int) -> None:
+        g = self.game
+        offers = g.s.ages.get("offers", [])
+        if idx >= len(offers) or not g.can_start_age(offers[idx]):
+            return
+        a = g.age_def(offers[idx]["id"])
+        body = Text.assemble((a["blurb"] + "\n\n", "italic"), ("Commit ", DIM), (money(g.age_cost(a)), f"bold {GREEN}"),
+                             (f" now. It will take {duration(a['hours'] * 3600)} of real time, whether or not you are here.", DIM))
+        choices = [(c["label"], Text("    " + c["note"], style=GREEN), True) for c in a["choice"]]
+
+        def done(pick: int | None) -> None:
+            if pick is not None:
+                g.start_age(idx, pick)
+                self.refresh_ui()
+        self.push_screen(ChoiceModal(a["name"].upper(), body, choices, closable=True, close_label="NOT YET"), done)
+
+    def _refresh_ledger_header(self, tab: str) -> None:
+        g = self.game
+        s = g.s
+        if tab == "dynasty":
+            if not g.dynasty_unlocked():
+                info = Text.assemble((" THE DYNASTY IS NOT YET YOURS\n", f"bold {AMBER}"),
+                                     (" Sign the Compact and take three Torpors in its service (machine level 4).\n", ""),
+                                     (f" Lineage {fmt(s.lineage)}  ·  {s.dynasties} dynasties", DIM))
+            elif g.can_dynasty():
+                info = Text.assemble((" A DYNASTY IS AVAILABLE\n", f"bold {GREEN}"),
+                                     (f" Founding one grants +{g.lineage_award()} Lineage, and costs your Potency and Bloodline.\n", ""),
+                                     (f" Lineage {fmt(s.lineage)}  ·  {s.dynasties} dynasties  ·  output x{g.lineage_mult():.2f} from Lineage", DIM))
+            else:
+                info = Text.assemble((" NOT YET WORTH FOUNDING\n", f"bold {AMBER}"),
+                                     (f" The next Lineage point needs {fmt(g.next_lineage_at())} Potency earned this dynasty ", ""),
+                                     (f"(you have {fmt(s.sov_earned)}).\n", DIM),
+                                     (f" Lineage {fmt(s.lineage)}  ·  {s.dynasties} dynasties", DIM))
+            self.base.query_one("#dyn-info", Static).update(info)
+            btn = self.base.query_one("#dyn-btn", ActionButton)
+            award = g.lineage_award()
+            btn.update(Text.assemble(("DYNASTY\n", "bold"), (f"+{award} LIN" if award else "not yet", "")))
+            btn.set_disabled_look(not g.can_dynasty())
+        elif tab == "ages":
+            offers, runs = len(s.ages.get("offers", [])), len(s.ages.get("running", []))
+            nxt = max(0.0, s.ages.get("next", 0) - g.clock())
+            self.base.query_one("#age-info", Static).update(Text.assemble(
+                (" AGES & HUNTS\n", f"bold {GREEN}"),
+                (f" {runs}/2 running  ·  {offers} offered  ·  next commission in {duration(nxt)}  ·  Lineage {fmt(s.lineage)}\n", ""),
+                (" Real-time commissions: they cannot be rushed, and they wait while you are away.", DIM)))
+        elif tab == "annals":
+            self.base.query_one("#annal-info", Static).update(Text.assemble(
+                (f" {g.title().upper()}\n", f"bold {GREEN}"),
+                (f" {len(s.feats)} of {len(g.c.feats)} annals inscribed  ·  +{(g.annals_mult() - 1) * 100:.0f}% output", ""),))
+
+    def action_dynasty(self) -> None:
+        g = self.game
+        if not g.can_dynasty():
+            self.notify(f"The next Lineage point needs {fmt(g.next_lineage_at())} Potency earned this dynasty.",
+                        title="DYNASTY", severity="warning")
+            return
+        award = g.lineage_award()
+        keep = g.perk_max("keep_tree_cost")
+        body = Text.assemble(
+            ("Founding a Dynasty burns the old house to the foundations.\n\n", "bold"),
+            ("You will lose: ", DIM), ("Potency, " + ("most of " if keep else "") + "the Bloodline, Endless Rites, and everything a Torpor takes.\n", ""),
+            ("You will keep: ", DIM), ("Lineage and its perks, Annals, Infernal Pacts, Court files, the Compact.\n\n", ""),
+            (f"Reward: +{award} Lineage.", f"bold {GREEN}"))
+        choices = [("FOUND THE DYNASTY", Text(f"    +{award} Lineage  ·  this cannot be undone", style=RED), True),
+                   ("Not yet", Text("    Nothing changes", style=DIM), True)]
+
+        def done(idx: int | None) -> None:
+            if idx == 0:
+                got = g.do_dynasty()
+                self.save()
+                self.notify(f"+{got} Lineage. The old house is a legend.", title="DYNASTY", timeout=10)
+                self.sel["ventures"] = 0
+                self.refresh_ui()
+        self.push_screen(ChoiceModal("FOUND A DYNASTY?", body, choices, closable=True, close_label="CANCEL"), done)
+
     def _refresh_exit_bar(self) -> None:
         g = self.game
         award = g.exit_award()
         if g.can_exit():
             info = Text.assemble((" TORPOR AVAILABLE\n", f"bold {GREEN}"),
-                                 (f" Sleeping now grants +{award} Potency (each point: +1% output, plus Bloodline awakenings).\n", ""),
+                                 (f" Sleeping now grants +{award} Potency (more output, plus Bloodline awakenings).\n", ""),
                                  (f" Next point at {money(g.next_award_at())} lifetime Blood.", DIM))
         else:
             info = Text.assemble((" TORPOR NOT YET WORTH THE SLEEP\n", f"bold {AMBER}"),
@@ -646,13 +890,15 @@ class SanguineApp(App):
     def _visible(self, tab: str) -> list:
         g = self.game
         if tab == "ventures":
-            return [r for r in self.base.query(VentureRow) if r.idx < g.s.revealed + 2]
+            return [r for r in self.base.query(VentureRow) if r.idx < min(g.s.revealed + 2, g.n_active())]
         if tab == "proxies":
             return [r for r in self.base.query(ProxyRow) if r.idx < g.s.revealed]
         if tab == "upgrades":
             return [r for r in self.base.query(UpgradeRow) if g.upgrade_visible(r.u)]
         if tab == "sovereignty":
             return list(self.base.query(NodeRow))
+        if tab in ("dynasty", "ages", "annals"):
+            return [r for r in self.base.query(f"#{tab} LedgerRow") if r.view().show]
         return []
 
     def _clamp_sel(self, tab: str) -> int:
@@ -739,11 +985,19 @@ class SanguineApp(App):
         self.do_hire(self.sel["ventures"])
 
     def do_node(self, node: dict) -> None:
-        self.game.buy_node(node)
+        if "effect" in node and "base_cost" in node:
+            self.game.buy_endless(node)
+        else:
+            self.game.buy_node(node)
         self.refresh_ui()
 
     def show_node(self, node: dict) -> None:
         g = self.game
+        if "base_cost" in node:
+            t = Text.assemble((node["desc"] + "\n\n", ""), ("Level      ", DIM), (f"{g.endless_level(node['id'])}\n", ""),
+                              ("Next cost  ", DIM), (f"{fmt(g.endless_cost(node))} Potency\n", ""))
+            self.push_screen(TextModal(node["name"].upper(), t))
+            return
         t = Text.assemble((node["desc"] + "\n\n", ""), ("Branch     ", DIM), (node["branch"].upper() + "\n", ""),
                           ("Cost       ", DIM), (f"{node['cost']} Potency\n", ""))
         if node.get("requires"):
@@ -762,7 +1016,7 @@ class SanguineApp(App):
             ("Entering Torpor buries the house for a century.\n\n", "bold"),
             ("You will lose: ", DIM), ("all domains, Blood, Thralls, per-waking rites, Inquisition and Frenzy.\n", ""),
             ("You will keep: ", DIM), ("Potency, the Bloodline, Infernal Pacts, Sin, Court files.\n\n", ""),
-            (f"Reward: +{award} Potency (+{award}% output, and points to spend).", f"bold {GREEN}"))
+            (f"Reward: +{award} Potency (more output, and points to spend).", f"bold {GREEN}"))
         choices = [("ENTER TORPOR", Text(f"    +{award} Potency  ·  this cannot be undone", style=RED), True),
                    ("Stay awake", Text("    Nothing changes", style=DIM), True)]
 
@@ -980,6 +1234,8 @@ class SanguineApp(App):
             self.action_hire_all()
         elif aid == "exit":
             self.action_exit_game()
+        elif aid == "dynasty":
+            self.action_dynasty()
         elif aid == "reset":
             self.action_reset_save()
 

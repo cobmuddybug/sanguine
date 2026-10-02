@@ -236,7 +236,7 @@ class UI(unittest.TestCase):
             async with app.run_test(size=(110, 34)) as pilot:
                 g = app.game
                 g.s.exits = 3
-                g.s.ventures[-1].owned = 1
+                g.s.ventures[19].owned = 1
                 await pilot.pause(0.4)
                 self.assertIsInstance(app.screen, ChoiceModal)   # page 1
                 await pilot.press("escape")                       # cannot be skipped
@@ -321,3 +321,74 @@ class UI(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LongGameUI(unittest.TestCase):
+    def test_dynasty_tab_buy_perk_and_found(self):
+        from sanguine.ui.ledger import LedgerRow
+
+        async def go():
+            app = SanguineApp(autosave=False)
+            async with app.run_test(size=(120, 40)) as pilot:
+                g = app.game
+                app._goto("dynasty")
+                await pilot.pause(0.2)
+                rows = list(app.query("#dynlist LedgerRow"))
+                g.s.lineage = 10
+                await pilot.pause(0.1)
+                app.refresh_ui()
+                await pilot.click(rows[0].query_one(".n-btn"))        # Heirloom Bloodline
+                self.assertIn("p1", g.s.perks)
+                self.assertEqual(g.s.lineage, 10 - g._pdef["p1"]["cost"])
+                # the Dynasty button refuses until the Compact is signed
+                await pilot.click(app.query_one("#dyn-btn"))
+                await pilot.pause(0.2)
+                self.assertEqual(g.s.dynasties, 0)
+                g.s.posthuman, g.s.machine_level = True, 4
+                g.s.sov_earned = g.s.sov_raw = g.dynasty_threshold() * 1e3
+                app.refresh_ui()
+                await pilot.click(app.query_one("#dyn-btn"))
+                await pilot.pause(0.3)
+                self.assertIsInstance(app.screen, ChoiceModal)
+                await pilot.press("1")
+                await pilot.pause(0.3)
+                self.assertEqual(g.s.dynasties, 1)
+                self.assertEqual(g.s.lineage, 10 - g._pdef["p1"]["cost"] + 9)
+        run(go())
+
+    def test_ages_and_hunts_tab(self):
+        async def go():
+            app = SanguineApp(autosave=False)
+            async with app.run_test(size=(120, 40)) as pilot:
+                g = app.game
+                now = [1_700_000_000.0]
+                g.clock = lambda: now[0]
+                g._slow_tick()
+                now[0] += 3 * 3600
+                g._slow_tick()
+                g.s.capital = 1e12
+                app._goto("ages")
+                await pilot.pause(0.2)
+                app.refresh_ui()
+                rows = list(app.query("#agelist LedgerRow"))
+                vis = [r for r in rows if r.view().show]
+                self.assertEqual(len(vis), 3)                       # daily, weekly, one offer
+                await pilot.click(rows[0].query_one(".n-btn"))      # accept the daily hunt
+                self.assertEqual(g.s.hunt["active"], "daily")
+                await pilot.click(rows[4].query_one(".n-btn"))  # begin the offered Age (offer slot 0)
+                await pilot.pause(0.3)
+                self.assertIsInstance(app.screen, ChoiceModal)
+                await pilot.press("1")
+                await pilot.pause(0.3)
+                self.assertEqual(len(g.s.ages["running"]), 1)
+        run(go())
+
+    def test_annals_tab_lists_every_feat(self):
+        async def go():
+            app = SanguineApp(autosave=False)
+            async with app.run_test(size=(120, 40)) as pilot:
+                app._goto("annals")
+                await pilot.pause(0.2)
+                self.assertEqual(len(list(app.query("#annallist LedgerRow"))), len(app.game.c.feats))
+                await pilot.press("tab", "shift+tab")
+        run(go())

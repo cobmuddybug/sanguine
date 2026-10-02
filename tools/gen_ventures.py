@@ -89,6 +89,46 @@ V = [
   ["Hell, opening. It seems to know you. It smiles the way you do.",
    "It has stopped waiting for you to choose. It has begun choosing for you, tenderly."],
   "The Reflection", "Wears your face while you rest, and has begun to enjoy it."),
+ ("Hellmouth Tithe Office", 10800, "Hell's own revenue service, hiring.",
+  ["The forms are in triplicate. The third copy is for you.",
+   "The queue is the product. Nobody has left a window in a century, or wished to."],
+  "Clerk of Cinders", "Stamps the damned in, and the paperwork warm."),
+ ("Exchange of Lamentations", 14400, "Grief, listed and traded by the hour.",
+  ["Every sob has a ticker. Every sorrow, a spread.",
+   "The floor never closes. The traders have forgotten they were ever anyone else."],
+  "Broker of Sorrows", "Buys low on despair, sells high on you."),
+ ("Cathedral of Teeth", 21600, "A nave of ivory, a choir of the hungry.",
+  ["The pews are carved, the hymns are bitten, the sacrament is bespoke.",
+   "The cathedral has started to chew. The congregation is not afraid. It is, if anything, aroused."],
+  "Cantor of Fangs", "Leads the hymn and the lowered gaze."),
+ ("Parliament of Wounds", 28800, "Legislation passed by open veins.",
+  ["Every law is a cut. Every amendment, a deeper one.",
+   "The chamber votes in unison, and bleeds in turn. Nobody checks the minutes."],
+  "Speaker of Scars", "Calls the house to order and the order to kneel."),
+ ("Orchard of Hanged Saints", 43200, "Martyrs, ripened.",
+  ["Each tree bears a martyr. Each martyr bears a grudge, and a gentle, willing sweetness.",
+   "The orchard blooms all year. The harvest is a sacrament and a party."],
+  "Orchardist of Rope", "Prunes the faithful and holds the ladder."),
+ ("Registry of the Unborn", 57600, "Every future soul is already on file.",
+  ["Names written before the cradle. Debts recorded before the first breath.",
+   "The registry is complete. The registry is, you suspect, not only a registry."],
+  "Archivist of Wombs", "Files the unborn alphabetically, and by appetite."),
+ ("The Mirror Court", 86400, "Every reflection holds a courtier, and every courtier a leash.",
+  ["Your reflection holds court in rooms you have never entered. It is very good at it.",
+   "Courtiers bow to the glass, not to you. You have begun to prefer it."],
+  "Lord of Glass", "Keeps your face in order while you are elsewhere."),
+ ("Reservoir of the Long Night", 115200, "A dark lake of everything ever taken.",
+  ["The surface is still. Beneath it, every pulse you ever stole, pooled and patient.",
+   "It has begun to rise. It is, you notice, rising toward you, with love."],
+  "Warden of the Deep", "Skims the surface and keeps the dark filled."),
+ ("Bed of the Last Empire", 172800, "A throne turned horizontal, and very much larger.",
+  ["An empire reduced to a mattress. Nobody has complained, and everybody has stayed.",
+   "The bed has borders now. Armies defend the sheets. Nobody remembers who is in the middle."],
+  "Chamberlain of Sheets", "Keeps the fires lit and the empire in bed."),
+ ("The Consummation", 259200, "Hell and the world, finally, wedded.",
+  ["The marriage that was always planned. The guests are all present, and all, somehow, you.",
+   "It is done. It is also, tenderly, beginning again."],
+  "The Officiant", "Reads the vows, and the small print."),
 ]
 
 N = len(V)
@@ -116,6 +156,16 @@ PLAIN = [
  "A great clockwork orrery that bends the lunar cycle, dragging blood to the surface of an entire city.",
  "You rule a city by night. Each subject owes a small ritual offering of blood, attention and desire.",
  "The last door: a real gateway to Hell. It runs itself, it is hungry, and it looks a lot like you.",
+ "Hell's tax office, now employing you. It collects a tithe on every soul that has ever sinned, retroactively.",
+ "A trading floor where grief is a commodity. Every funeral, breakup and betrayal is priced, bundled and sold on.",
+ "A cathedral built of teeth, where the choir sings with its mouths open. Sacred, hungry, and surprisingly warm.",
+ "A legislature that rules by wounding itself. Every bill passed is a cut, and every cut is a tithe for you.",
+ "An orchard of martyrs, grown for harvest. The fruit is willing, if a little bitter, and ripens all year.",
+ "An archive of every soul not yet born. You hold the lien on all of them, before they have had the chance to refuse.",
+ "A court that exists only in mirrors, run by reflections of you. They are better at it than you were.",
+ "A black lake holding every pulse you have ever drunk. It rises toward you, slowly, wanting to come home.",
+ "The whole empire, now a bed. It is large, it is warm, and nobody who has laid down in it has wanted to get up.",
+ "The wedding of Hell and the world, with you as officiant, bride and cake. It is the last thing, and then the first.",
 ]
 
 MILESTONES = [
@@ -155,7 +205,7 @@ def main():
         payback = 4 * PAYBACK_R ** i          # seconds for a single unit to repay itself
         slow = 1 + (SLOWDOWN - 1) * min(1.0, i / 4)   # opening tiers stay snappy
         payout = sig(cost * cyc / payback / slow)
-        growth = round(1.07 + 0.08 * i / (N - 1), 4)
+        growth = round(1.07 + 0.08 * i / 19, 4)   # curve anchored on the original 20 tiers
         out += [
             "[[venture]]",
             f'id = "v{i + 1:02d}"',

@@ -29,7 +29,7 @@ def best_purchase(g: Game):
         if gain > 0 and (best is None or cost / gain < best[0]):
             best = (cost / gain, cost, ("unit", i))
     for u in C.upgrades:
-        if u.currency != "capital" or u.kind == "heat" or not g.upgrade_visible(u):
+        if u.currency != "capital" or u.kind == "heat" or not g.can_buy_upgrade(u) and g.hunt_rule() == "no_rites" or not g.upgrade_visible(u):
             continue
         if u.kind == "venture":
             i = u.target
